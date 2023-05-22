@@ -134,3 +134,16 @@ func max(a int, b int) int {
 		return b
 	}
 }
+
+// 跳跃游戏
+func CanJump(nums []int) bool {
+	maxLength := 0
+	for i := 0; i < len(nums); i++ {
+		if i > maxLength {
+			return false
+		} else {
+			maxLength = max(maxLength, i+nums[i])
+		}
+	}
+	return true
+}
