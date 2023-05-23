@@ -97,12 +97,6 @@ func Rotate(nums []int, k int) {
 	reverse(nums[k:])
 }
 
-func reverse(nums []int) {
-	for i, n := 0, len(nums); i < n/2; i++ {
-		nums[i], nums[n-i-1] = nums[n-i-1], nums[i]
-	}
-}
-
 // 买卖股票的最佳时机
 func MaxProfit(prices []int) int {
 	min, profit := math.MaxInt64, 0
@@ -127,14 +121,6 @@ func MaxProfitPlus(prices []int) int {
 	return dp[length-1][0]
 }
 
-func max(a int, b int) int {
-	if a > b {
-		return a
-	} else {
-		return b
-	}
-}
-
 // 跳跃游戏
 func CanJump(nums []int) bool {
 	maxLength := 0
@@ -146,4 +132,39 @@ func CanJump(nums []int) bool {
 		}
 	}
 	return true
+}
+
+// H指数
+func HIndex(citations []int) int {
+	n := len(citations)
+	counter := make([]int, n+1)
+	for _, citation := range citations {
+		if citation >= n {
+			counter[n]++
+		} else {
+			counter[citation]++
+		}
+	}
+	for i, total := n, 0; i > 0; i-- {
+		total += counter[i]
+		if total >= i {
+			return i
+		}
+	}
+	return 0
+}
+
+// ----------- 私有工具类方法 --------------
+func reverse(nums []int) {
+	for i, n := 0, len(nums); i < n/2; i++ {
+		nums[i], nums[n-i-1] = nums[n-i-1], nums[i]
+	}
+}
+
+func max(a int, b int) int {
+	if a > b {
+		return a
+	} else {
+		return b
+	}
 }
