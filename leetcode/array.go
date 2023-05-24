@@ -3,6 +3,7 @@ package leetcode
 import (
 	"fmt"
 	"math"
+	"math/rand"
 )
 
 // 合并两个有序数组
@@ -152,6 +153,63 @@ func HIndex(citations []int) int {
 		}
 	}
 	return 0
+}
+
+// O(1) 时间插入、删除和获取随机元素
+type RandomizedSet struct {
+	hashmap  map[int]int
+	elements []int
+}
+
+func Constructor() RandomizedSet {
+	return RandomizedSet{
+		hashmap:  make(map[int]int),
+		elements: make([]int, 0),
+	}
+}
+
+func (rs *RandomizedSet) Insert(val int) bool {
+	if _, ok := rs.hashmap[val]; ok {
+		return false
+	}
+	rs.hashmap[val] = len(rs.elements)
+	rs.elements = append(rs.elements, val)
+	return true
+}
+
+func (rs *RandomizedSet) Remove(val int) bool {
+	index, ok := rs.hashmap[val]
+	if !ok {
+		return false
+	}
+	last := len(rs.elements) - 1
+	rs.elements[index] = rs.elements[last]
+	rs.hashmap[rs.elements[last]] = index
+	rs.elements = rs.elements[:last]
+	delete(rs.hashmap, val)
+	return true
+}
+
+func (rs *RandomizedSet) GetRandom() int {
+	return rs.elements[rand.Intn(len(rs.elements))]
+}
+
+// 除自身以外数组的乘积
+func ProductExceptSelf(nums []int) []int {
+	length := len(nums)
+	answer, L, R := make([]int, length), make([]int, length), make([]int, length)
+	L[0] = 1
+	for i := 1; i < length; i++ {
+		L[i] = nums[i-1] * L[i-1]
+	}
+	R[length-1] = 1
+	for i := length - 2; i >= 0; i-- {
+		R[i] = nums[i+1] * R[i+1]
+	}
+	for i := 0; i < length; i++ {
+		answer[i] = L[i] * R[i]
+	}
+	return answer
 }
 
 // ----------- 私有工具类方法 --------------

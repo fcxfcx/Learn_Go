@@ -5,6 +5,6 @@ import (
 )
 
 func main() {
-	nums1 := [5]int{2, 3, 1, 1, 4}
-	println(leetcode.CanJump(nums1[:]))
+	nums1 := [5]int{1, 2, 3, 4, 5}
+	println(leetcode.ProductExceptSelf(nums1[:]))
 }
