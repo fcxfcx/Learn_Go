@@ -212,6 +212,134 @@ func ProductExceptSelf(nums []int) []int {
 	return answer
 }
 
+// 加油站
+func CanCompleteCircuit(gas []int, cost []int) int {
+	for i, n := 0, len(gas); i < n; {
+		sumGas, sumCost, canCover := 0, 0, 0
+		for canCover < n {
+			j := (i + canCover) % n
+			sumGas += gas[j]
+			sumCost += cost[j]
+			if sumGas < sumCost {
+				break
+			}
+			canCover++
+		}
+		if canCover == n {
+			return i
+		} else {
+			i += canCover + 1
+		}
+	}
+	return -1
+}
+
+// 接雨水
+func Trap(height []int) int {
+	length := len(height)
+	left, right, result := 0, length-1, 0
+	leftMaxHeight := height[left]
+	rightMaxHeight := height[right]
+	for left < right {
+		if leftMaxHeight < rightMaxHeight {
+			result += leftMaxHeight - height[left]
+			if left++; height[left] > leftMaxHeight {
+				leftMaxHeight = height[left]
+			}
+		} else {
+			result += rightMaxHeight - height[right]
+			if right--; height[right] > rightMaxHeight {
+				rightMaxHeight = height[right]
+			}
+		}
+	}
+	return result
+}
+
+// 分糖果
+func Candy(ratings []int) (ans int) {
+	length := len(ratings)
+	left, right := make([]int, length), 0
+	left[0] = 1
+	for i := 1; i < length; i++ {
+		if ratings[i] > ratings[i-1] {
+			left[i] = left[i-1] + 1
+		} else {
+			left[i] = 1
+		}
+	}
+	for j := length - 1; j >= 0; j-- {
+		if j < length-1 && ratings[j] > ratings[j+1] {
+			right++
+		} else {
+			right = 1
+		}
+		ans += max(left[j], right)
+	}
+	return
+}
+
+// 罗马数字转整数
+func RomanToInt(s string) int {
+	valueMap := map[byte]int{'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}
+	length, answer := len(s), 0
+	for n := range s {
+		value := valueMap[s[n]]
+		if n < length-1 && value < valueMap[s[n+1]] {
+			answer -= value
+		} else {
+			answer += value
+		}
+	}
+	return answer
+}
+
+// 整数转罗马数字
+func IntToRoman(num int) string {
+	value := []int{1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1}
+	symbol := []string{"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"}
+	roman := ""
+	for i := 0; i < len(value); i++ {
+		for num >= value[i] {
+			num -= value[i]
+			roman += symbol[i]
+		}
+		if num == 0 {
+			break
+		}
+	}
+	return roman
+}
+
+// 最后一个单词的长度
+func LengthOfLastWord(s string) int {
+	temp := []byte(s)
+	length, count := len(temp), 0
+	for i := length - 1; i > 0; i-- {
+		if temp[i] != ' ' {
+			count++
+		} else if count != 0 {
+			return count
+		}
+	}
+	return count
+}
+
+// 最长公共前缀
+func LongestCommonPrefix(strs []string) string {
+	result := ""
+	for i := 0; i < len(strs[0]); i++ {
+		tempByte := strs[0][i]
+		for _, s := range strs {
+			if i > len(s) || s[i] != tempByte {
+				return result
+			}
+		}
+		result += string(tempByte)
+	}
+	return result
+}
+
 // ----------- 私有工具类方法 --------------
 func reverse(nums []int) {
 	for i, n := 0, len(nums); i < n/2; i++ {
@@ -221,6 +349,14 @@ func reverse(nums []int) {
 
 func max(a int, b int) int {
 	if a > b {
+		return a
+	} else {
+		return b
+	}
+}
+
+func min(a int, b int) int {
+	if a < b {
 		return a
 	} else {
 		return b
