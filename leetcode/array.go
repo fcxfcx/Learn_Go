@@ -340,6 +340,40 @@ func LongestCommonPrefix(strs []string) string {
 	return result
 }
 
+// 反转字符串单词
+func ReverseWords(s string) string {
+	result := ""
+	start, end := 0, 0
+	for i := len(s) - 1; i >= 0; {
+		if s[i] == ' ' {
+			i--
+			continue
+		}
+		end = i
+		start = i
+		for j := end; j >= 0; j-- {
+			if s[j] == ' ' {
+				break
+			}
+			start--
+		}
+		i = start
+		start++
+		if start != end {
+			result += s[start : end+1]
+			result += " "
+		} else {
+			result += string(s[end])
+			result += " "
+		}
+	}
+	if result != "" {
+		return result[:len(result)-1]
+	} else {
+		return result
+	}
+}
+
 // ----------- 私有工具类方法 --------------
 func reverse(nums []int) {
 	for i, n := 0, len(nums); i < n/2; i++ {

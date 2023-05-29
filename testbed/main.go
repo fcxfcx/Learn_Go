@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	nums1 := [12]int{0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1}
-	result := leetcode.Trap(nums1[:])
+	string1 := "a good   example"
+	result := leetcode.ReverseWords(string1)
 	println(result)
 }
