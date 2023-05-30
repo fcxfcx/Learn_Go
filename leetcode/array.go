@@ -374,6 +374,107 @@ func ReverseWords(s string) string {
 	}
 }
 
+// N字形变换
+func Convert(s string, numRows int) string {
+	if numRows == 1 {
+		return s
+	}
+	result := ""
+	results := make([]string, numRows)
+	row, reverse := 0, false
+	for i := 0; i < len(s); i++ {
+		results[row] += string(s[i])
+		if reverse {
+			row--
+		} else {
+			row++
+		}
+		if row == numRows-1 {
+			reverse = true
+		}
+		if row == 0 {
+			reverse = false
+		}
+	}
+	for _, value := range results {
+		result += value
+	}
+	return result
+}
+
+// 找出字符串第一个匹配的下标
+func StrStr(haystack string, needle string) int {
+	if len(haystack) < len(needle) {
+		return -1
+	}
+	for i := 0; i < len(haystack); i++ {
+		if haystack[i] == needle[0] {
+			for j := 0; j < len(needle); j++ {
+				if i+j >= len(haystack) || haystack[i+j] != needle[j] {
+					break
+				}
+				if j == len(needle)-1 {
+					return i
+				}
+			}
+		}
+	}
+	return -1
+}
+
+// 文本左右对齐
+func FullJustify(words []string, maxWidth int) []string {
+	results := make([]string, 0)
+	end := 0
+	tempString := ""
+	// 当前放入行的单词长度和数量
+	tempLength, tempCount := 0, 0
+	for i, word := range words {
+		tempLength += len(word)
+		end = i
+		tempCount++
+		// 如果是最后一行
+		if end == len(words)-1 {
+			last := maxWidth - tempLength - tempCount + 1
+			for j := end - tempCount + 1; j <= end; j++ {
+				tempString += words[j]
+				if j == end {
+					tempString += repeat(last)
+				} else {
+					tempString += " "
+				}
+			}
+			results = append(results, tempString)
+			return results
+		}
+		// 一行已经填满，进行该行的字符串操作
+		if tempCount != 0 && tempLength+tempCount+len(words[i+1]) > maxWidth {
+			// 计算填补空格
+			if tempCount == 1 {
+				tempString += words[end]
+				tempString += repeat(maxWidth - tempLength)
+			} else {
+				last := (maxWidth - tempLength) % (tempCount - 1)
+				space := (maxWidth - tempLength - last) / (tempCount - 1)
+				for j := end - tempCount + 1; j <= end; j++ {
+					tempString += words[j]
+					if j < end-tempCount+1+last {
+						tempString += repeat(space + 1)
+					} else if j != end {
+						tempString += repeat(space)
+					}
+				}
+			}
+
+			results = append(results, tempString)
+			tempString = ""
+			tempLength = 0
+			tempCount = 0
+		}
+	}
+	return results
+}
+
 // ----------- 私有工具类方法 --------------
 func reverse(nums []int) {
 	for i, n := 0, len(nums); i < n/2; i++ {
@@ -389,10 +490,10 @@ func max(a int, b int) int {
 	}
 }
 
-func min(a int, b int) int {
-	if a < b {
-		return a
-	} else {
-		return b
+func repeat(num int) string {
+	result := ""
+	for i := 0; i < num; i++ {
+		result += " "
 	}
+	return result
 }
