@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	string1 := "a good   example"
-	result := leetcode.ReverseWords(string1)
+	string1 := "pwwkew"
+	result := leetcode.LengthOfLongestSubstring(string1)
 	println(result)
 }
