@@ -5,7 +5,6 @@ import (
 )
 
 func main() {
-	string1 := "pwwkew"
-	result := leetcode.LengthOfLongestSubstring(string1)
+	result := leetcode.MinWindow("ADOBECODEBANC", "ABC")
 	println(result)
 }
