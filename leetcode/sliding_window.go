@@ -98,12 +98,6 @@ func MinWindow(s string, t string) string {
 	// 特判
 	if slen < tlen {
 		return result
-	} else if slen == tlen {
-		if s == t {
-			return s
-		} else {
-			return result
-		}
 	}
 	hashmap1 := make(map[byte]int)
 	for _, b := range t {
