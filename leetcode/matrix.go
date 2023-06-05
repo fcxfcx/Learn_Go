@@ -38,3 +38,73 @@ func IsValidSudoku(board [][]byte) bool {
 	}
 	return true
 }
+
+// 螺旋矩阵
+func SpiralOrder(matrix [][]int) []int {
+	m, n := len(matrix), len(matrix[0])
+	operations := []string{"right", "down", "left", "up"}
+	operation, count := 0, 0
+	result := make([]int, 0)
+	if m == 1 {
+		result = matrix[0]
+		return result
+	} else if n == 1 {
+		for _, value := range matrix {
+			result = append(result, value[0])
+		}
+		return result
+	}
+	for i, j := 0, 0; count < m*n; {
+		result = append(result, matrix[i][j])
+		count++
+		// 题目条件元素大小在正负100之间，设置为-101以标记为已读取
+		matrix[i][j] = -101
+		if j == n-1 && i == 0 {
+			//右上角
+			operation++
+			i++
+			continue
+		} else if i == m-1 && j == n-1 {
+			// 右下角
+			operation++
+			j--
+			continue
+		} else if i == m-1 && j == 0 {
+			// 左下角
+			operation++
+			i--
+			continue
+		}
+		switch operations[operation%4] {
+		case "right":
+			if matrix[i][j+1] == -101 {
+				operation++
+				i++
+			} else {
+				j++
+			}
+		case "down":
+			if matrix[i+1][j] == -101 {
+				operation++
+				j--
+			} else {
+				i++
+			}
+		case "left":
+			if matrix[i][j-1] == -101 {
+				operation++
+				i--
+			} else {
+				j--
+			}
+		case "up":
+			if matrix[i-1][j] == -101 {
+				operation++
+				j++
+			} else {
+				i--
+			}
+		}
+	}
+	return result
+}
