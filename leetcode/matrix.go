@@ -108,3 +108,102 @@ func SpiralOrder(matrix [][]int) []int {
 	}
 	return result
 }
+
+// 旋转图像
+func RotateMatrix(matrix [][]int) {
+	n := len(matrix)
+	for i := 0; i < n/2; i++ {
+		for j := 0; j < (n+1)/2; j++ {
+			matrix[i][j], matrix[n-j-1][i], matrix[n-i-1][n-j-1], matrix[j][n-i-1] =
+				matrix[n-j-1][i], matrix[n-i-1][n-j-1], matrix[j][n-i-1], matrix[i][j]
+		}
+	}
+}
+
+// 矩阵置零
+func SetZeroes(matrix [][]int) {
+	m, n := len(matrix), len(matrix[0])
+	row, column := false, false
+	for i := 0; i < m; i++ {
+		if matrix[i][0] == 0 {
+			column = true
+		}
+	}
+	for j := 0; j < n; j++ {
+		if matrix[0][j] == 0 {
+			row = true
+		}
+	}
+	for i := 1; i < m; i++ {
+		for j := 1; j < n; j++ {
+			if matrix[i][j] == 0 {
+				matrix[0][j] = 0
+				matrix[i][0] = 0
+			}
+		}
+	}
+
+	for i := 1; i < m; i++ {
+		for j := 1; j < n; j++ {
+			if matrix[i][0] == 0 || matrix[0][j] == 0 {
+				matrix[i][j] = 0
+			}
+		}
+	}
+	if row {
+		for j := 0; j < n; j++ {
+			matrix[0][j] = 0
+		}
+	}
+	if column {
+		for i := 0; i < m; i++ {
+			matrix[i][0] = 0
+		}
+	}
+}
+
+// 生命游戏
+func GameOfLife(board [][]int) {
+	// 一共四个状态
+	// 1 保持存活
+	// 0 保持死亡
+	// 2 死变成活
+	// -1 活变成死
+	m, n := len(board), len(board[0])
+	x := [8]int{0, 0, 1, 1, 1, -1, -1, -1}
+	y := [8]int{1, -1, 1, 0, -1, -1, 0, 1}
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			cur := board[i][j]
+			count := 0
+			for k := 0; k < 8; k++ {
+				if i+x[k] < 0 || i+x[k] >= m || j+y[k] < 0 || j+y[k] >= n {
+					// 跳过边界情况
+					continue
+				}
+				temp := board[i+x[k]][j+y[k]]
+				if temp == 1 || temp == -1 {
+					count++
+				}
+			}
+			if cur == 1 {
+				if count < 2 {
+					board[i][j] = -1
+				} else if count > 3 {
+					board[i][j] = -1
+				}
+			} else if cur == 0 && count == 3 {
+				board[i][j] = 2
+			}
+		}
+	}
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			if board[i][j] == 2 {
+				board[i][j] = 1
+			} else if board[i][j] == -1 {
+				board[i][j] = 0
+			}
+		}
+	}
+}
