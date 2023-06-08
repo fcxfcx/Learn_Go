@@ -67,3 +67,39 @@ func WordPattern(pattern string, s string) bool {
 	}
 	return true
 }
+
+// 有效的字母异构词
+func IsAnagram(s string, t string) bool {
+	hashmap := make(map[byte]int)
+	if len(s) != len(t) {
+		return false
+	}
+	for _, value := range s {
+		hashmap[byte(value)] += 1
+	}
+	for _, value := range t {
+		hashmap[byte(value)]--
+		if hashmap[byte(value)] < 0 {
+			return false
+		}
+	}
+	return true
+}
+
+// 字母异构词分组
+func GroupAnagrams(strs []string) [][]string {
+	dic := make(map[[26]int][]string)
+	for _, str := range strs {
+		temp := [26]int{}
+		for _, v := range str {
+			index := v - 'a'
+			temp[index] += 1
+		}
+		dic[temp] = append(dic[temp], str)
+	}
+	result := make([][]string, 0)
+	for _, v := range dic {
+		result = append(result, v)
+	}
+	return result
+}
