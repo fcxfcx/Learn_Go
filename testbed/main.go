@@ -5,7 +5,6 @@ import (
 )
 
 func main() {
-	matrix := [][]int{{2, 3}}
-	result := leetcode.SpiralOrder(matrix)
+	result := leetcode.IsHappy(19)
 	println(result)
 }
