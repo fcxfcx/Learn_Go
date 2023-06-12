@@ -103,3 +103,41 @@ func GroupAnagrams(strs []string) [][]string {
 	}
 	return result
 }
+
+// 存在重复元素Ⅱ
+func ContainsNearbyDuplicate(nums []int, k int) bool {
+	length := len(nums)
+	hashmap := make(map[int]int)
+	for i := 0; i < length; i++ {
+		if index, ok := hashmap[nums[i]]; ok {
+			if i-index <= k {
+				return true
+			}
+		}
+		hashmap[nums[i]] = i
+	}
+	return false
+}
+
+// 最长连续序列
+func LongestConsecutive(nums []int) int {
+	hashmap := make(map[int]bool)
+	maxLength := 0
+	for _, num := range nums {
+		hashmap[num] = true
+	}
+	for num := range hashmap {
+		if !hashmap[num-1] {
+			curLength := 1
+			cur := num
+			for hashmap[cur+1] {
+				cur++
+				curLength++
+			}
+			if curLength > maxLength {
+				maxLength = curLength
+			}
+		}
+	}
+	return maxLength
+}
