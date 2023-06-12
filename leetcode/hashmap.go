@@ -104,6 +104,26 @@ func GroupAnagrams(strs []string) [][]string {
 	return result
 }
 
+// 快乐数
+func IsHappy(n int) bool {
+	squareSum := func(a int) int {
+		temp := 0
+		for a > 0 {
+			i := a % 10
+			temp += i * i
+			a = a / 10
+		}
+		return temp
+	}
+	slow, fast := n, squareSum(n)
+	for fast != slow && fast != 1 {
+		slow = squareSum(slow)
+		fast = squareSum(fast)
+		fast = squareSum(fast)
+	}
+	return fast == 1
+}
+
 // 存在重复元素Ⅱ
 func ContainsNearbyDuplicate(nums []int, k int) bool {
 	length := len(nums)
