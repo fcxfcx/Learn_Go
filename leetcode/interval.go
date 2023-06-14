@@ -36,7 +36,7 @@ func SummaryRanges(nums []int) []string {
 }
 
 // 合并区间
-func Merge(intervals [][]int) [][]int {
+func MergeInterval(intervals [][]int) [][]int {
 	sort.Slice(intervals, func(i, j int) bool {
 		return intervals[i][0] < intervals[j][0]
 	})
@@ -55,4 +55,34 @@ func Merge(intervals [][]int) [][]int {
 	}
 	res = append(res, prev)
 	return res
+}
+
+// 插入区间
+func InsertInterval(intervals [][]int, newInterval []int) [][]int {
+	result := make([][]int, 0)
+	length := len(intervals)
+	if length == 0 {
+		result = append(result, newInterval)
+		return result
+	}
+	i := 0
+	for i < length && intervals[i][1] < newInterval[0] {
+		result = append(result, intervals[i])
+		i++
+	}
+	for i < length && intervals[i][0] <= newInterval[1] {
+		if intervals[i][0] < newInterval[0] {
+			newInterval[0] = intervals[i][0]
+		}
+		if intervals[i][1] > newInterval[1] {
+			newInterval[1] = intervals[i][1]
+		}
+		i++
+	}
+	result = append(result, newInterval)
+	for i < length {
+		result = append(result, intervals[i])
+		i++
+	}
+	return result
 }
