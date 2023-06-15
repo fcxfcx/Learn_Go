@@ -86,3 +86,20 @@ func InsertInterval(intervals [][]int, newInterval []int) [][]int {
 	}
 	return result
 }
+
+// 用最小数量的箭射爆气球
+func FindMinArrowShots(points [][]int) int {
+	sort.Slice(points, func(i, j int) bool {
+		return points[i][1] < points[j][1]
+	})
+	count := 1
+	maxRight := points[0][1]
+	for _, interval := range points {
+		if interval[0] > maxRight {
+			count++
+			maxRight = interval[1]
+			continue
+		} 
+	}
+	return count
+}
