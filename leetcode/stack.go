@@ -1,7 +1,9 @@
 package leetcode
 
+import "strings"
+
 // 有效的括号
-func isValidBracket(s string) bool {
+func IsValidBracket(s string) bool {
 	length := len(s)
 	if length%2 == 1 {
 		return false
@@ -23,4 +25,20 @@ func isValidBracket(s string) bool {
 		}
 	}
 	return len(stack) == 0
+}
+
+// 简化路径
+func SimplifyPath(path string) string {
+	stack := make([]string, 0)
+	for _, item := range strings.Split(path, "/") {
+		if item == ".." {
+			if len(stack) > 0 {
+				stack = stack[:len(stack)-1]
+			}
+
+		} else if item != "" && item != "." {
+			stack = append(stack, item)
+		}
+	}
+	return "/" + strings.Join(stack, "/")
 }
