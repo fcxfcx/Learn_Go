@@ -42,3 +42,41 @@ func SimplifyPath(path string) string {
 	}
 	return "/" + strings.Join(stack, "/")
 }
+
+// 最小栈
+type MinStack struct {
+	stack    []int
+	minStack []int
+}
+
+func StackConstructor() MinStack {
+	return MinStack{
+		stack:    make([]int, 0),
+		minStack: make([]int, 0),
+	}
+}
+
+func (ms *MinStack) Push(val int) {
+	ms.stack = append(ms.stack, val)
+	if len(ms.minStack) == 0 {
+		ms.minStack = append(ms.minStack, val)
+	} else if ms.GetMin() < val {
+		ms.minStack = append(ms.minStack, ms.GetMin())
+	} else {
+		ms.minStack = append(ms.minStack, val)
+	}
+
+}
+
+func (ms *MinStack) Pop() {
+	ms.stack = ms.stack[:len(ms.stack)-1]
+	ms.minStack = ms.minStack[:len(ms.minStack)-1]
+}
+
+func (ms *MinStack) Top() int {
+	return ms.stack[len(ms.stack)-1]
+}
+
+func (ms *MinStack) GetMin() int {
+	return ms.minStack[len(ms.minStack)-1]
+}
