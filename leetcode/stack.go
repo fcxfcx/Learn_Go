@@ -1,6 +1,9 @@
 package leetcode
 
-import "strings"
+import (
+	"strconv"
+	"strings"
+)
 
 // 有效的括号
 func IsValidBracket(s string) bool {
@@ -79,4 +82,33 @@ func (ms *MinStack) Top() int {
 
 func (ms *MinStack) GetMin() int {
 	return ms.minStack[len(ms.minStack)-1]
+}
+
+// 逆波兰表达式求值
+func EvalRPN(tokens []string) int {
+	stack := make([]int, 0)
+	for _, value := range tokens {
+		switch value {
+		case "+":
+			a, b := stack[len(stack)-1], stack[len(stack)-2]
+			stack = stack[:len(stack)-2]
+			stack = append(stack, a+b)
+		case "-":
+			a, b := stack[len(stack)-1], stack[len(stack)-2]
+			stack = stack[:len(stack)-2]
+			stack = append(stack, b-a)
+		case "*":
+			a, b := stack[len(stack)-1], stack[len(stack)-2]
+			stack = stack[:len(stack)-2]
+			stack = append(stack, a*b)
+		case "/":
+			a, b := stack[len(stack)-1], stack[len(stack)-2]
+			stack = stack[:len(stack)-2]
+			stack = append(stack, b/a)
+		default:
+			num, _ := strconv.Atoi(value)
+			stack = append(stack, num)
+		}
+	}
+	return stack[0]
 }

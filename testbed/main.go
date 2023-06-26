@@ -5,6 +5,7 @@ import (
 )
 
 func main() {
-	result := leetcode.IsHappy(19)
+	tokens := []string{"4", "13", "5", "/", "+"}
+	result := leetcode.EvalRPN(tokens)
 	println(result)
 }
