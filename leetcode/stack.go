@@ -112,3 +112,36 @@ func EvalRPN(tokens []string) int {
 	}
 	return stack[0]
 }
+
+// 基本计算器
+func Calculate(s string) int {
+	stack := []int{1}
+	sign := 1
+	length := len(s)
+	ans := 0
+	for i := 0; i < length; {
+		switch s[i] {
+		case ' ':
+			i++
+		case '+':
+			sign = stack[len(stack)-1]
+			i++
+		case '-':
+			sign = -stack[len(stack)-1]
+			i++
+		case '(':
+			stack = append(stack, sign)
+			i++
+		case ')':
+			stack = stack[:len(stack)-1]
+			i++
+		default:
+			num := 0
+			for ; i < length && '0' <= s[i] && s[i] <= '9'; i++ {
+				num = num*10 + int(s[i]-'0')
+			}
+			ans += sign * num
+		}
+	}
+	return ans
+}
