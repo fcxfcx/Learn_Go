@@ -147,3 +147,26 @@ func CopyRandomList(head *Node) *Node {
 	}
 	return new_head
 }
+
+// 反转列表Ⅱ
+func ReverseBetween(head *ListNode, left int, right int) *ListNode {
+	if left == right || head.Next == nil {
+		return head
+	}
+	dummy_head := &ListNode{
+		Val:  -1,
+		Next: head,
+	}
+	pre := dummy_head
+	for i := 1; i < left; i++ {
+		pre = pre.Next
+	}
+	cur := pre.Next
+	for i := 0; i < right-left; i++ {
+		next := cur.Next
+		cur.Next = next.Next
+		next.Next = pre.Next
+		pre.Next = next
+	}
+	return dummy_head.Next
+}
