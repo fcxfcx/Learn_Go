@@ -11,6 +11,18 @@ type Node struct {
 	Random *Node
 }
 
+func reverseLinkList(head *ListNode) *ListNode {
+	var pre *ListNode
+	cur := head
+	for cur != nil {
+		next := cur.Next
+		cur.Next = pre
+		pre = cur
+		cur = next
+	}
+	return pre
+}
+
 // 环形链表
 func HasCycle(head *ListNode) bool {
 	if head == nil || head.Next == nil {
@@ -167,6 +179,32 @@ func ReverseBetween(head *ListNode, left int, right int) *ListNode {
 		cur.Next = next.Next
 		next.Next = pre.Next
 		pre.Next = next
+	}
+	return dummy_head.Next
+}
+
+// k个一组反转链表
+func ReverseKGroup(head *ListNode, k int) *ListNode {
+	dummy_head := &ListNode{
+		Val:  -1,
+		Next: head,
+	}
+	pre := dummy_head
+	end := dummy_head
+	for end != nil {
+		for i := 0; i < k && end != nil; i++ {
+			end = end.Next
+		}
+		if end == nil {
+			break
+		}
+		start := pre.Next
+		next := end.Next
+		end.Next = nil
+		pre.Next = reverseLinkList(start)
+		start.Next = next
+		pre = start
+		end = pre
 	}
 	return dummy_head.Next
 }
