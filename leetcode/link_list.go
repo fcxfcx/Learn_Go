@@ -208,3 +208,30 @@ func ReverseKGroup(head *ListNode, k int) *ListNode {
 	}
 	return dummy_head.Next
 }
+
+// 删除链表的倒数第 N 个结点
+func RemoveNthFromEnd(head *ListNode, n int) *ListNode {
+	dummyhead := &ListNode{
+		Val:  -1,
+		Next: head,
+	}
+	if n == 1 && head.Next == nil {
+		return nil
+	}
+	start, end := dummyhead, head
+	count := 1
+	for end.Next != nil {
+		end = end.Next
+		count++
+	}
+	for i := 0; i < count-n; i++ {
+		start = start.Next
+	}
+	if start.Next == end {
+		start.Next = nil
+		return dummyhead.Next
+	}
+	next := start.Next.Next
+	start.Next = next
+	return dummyhead.Next
+}
