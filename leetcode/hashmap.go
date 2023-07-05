@@ -161,3 +161,69 @@ func LongestConsecutive(nums []int) int {
 	}
 	return maxLength
 }
+
+// 删除排序链表中的重复元素Ⅱ
+func DeleteDuplicates(head *ListNode) *ListNode {
+	dummyhead := &ListNode{
+		Val:  -1,
+		Next: head,
+	}
+	pre := dummyhead
+	cur := head
+	for cur != nil {
+		if cur.Next != nil && cur.Next.Val == cur.Val {
+			cur = cur.Next
+			continue
+		} else if pre.Next != cur {
+			pre.Next = cur.Next
+			cur = cur.Next
+		} else {
+			pre = pre.Next
+			cur = cur.Next
+		}
+	}
+	return dummyhead.Next
+
+}
+
+// 旋转链表
+func RotateRight(head *ListNode, k int) *ListNode {
+	if head == nil || head.Next == nil || k == 0 {
+		return head
+	}
+	tail, newtail := head, head
+	n := 1
+	for tail.Next != nil {
+		tail = tail.Next
+		n++
+	}
+	// 首尾相连
+	tail.Next = head
+	for i := 1; i < (n - k%n); i++ {
+		newtail = newtail.Next
+	}
+	newhead := newtail.Next
+	newtail.Next = nil
+	return newhead
+}
+
+// 分隔链表
+func Partition(head *ListNode, x int) *ListNode {
+	firstDummy := &ListNode{}
+	secondDummy := &ListNode{}
+	firstCur, secondCur := firstDummy, secondDummy
+	for head != nil {
+		if head.Val < x {
+			firstCur.Next = head
+			firstCur = firstCur.Next
+
+		} else {
+			secondCur.Next = head
+			secondCur = secondCur.Next
+		}
+		head = head.Next
+	}
+	secondCur.Next = nil
+	firstCur.Next = secondDummy.Next
+	return firstDummy.Next
+}
