@@ -5,7 +5,11 @@ import (
 )
 
 func main() {
-	tokens := []string{"4", "13", "5", "/", "+"}
-	result := leetcode.EvalRPN(tokens)
-	println(result)
+	cache := leetcode.LRUConstructor(2)
+	cache.Put(2, 1)
+	cache.Put(2, 2)
+	cache.Get(2)
+	cache.Put(1, 1)
+	cache.Put(4, 1)
+	cache.Get(2)
 }

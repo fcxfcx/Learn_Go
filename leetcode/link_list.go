@@ -235,3 +235,170 @@ func RemoveNthFromEnd(head *ListNode, n int) *ListNode {
 	start.Next = next
 	return dummyhead.Next
 }
+
+// 删除排序链表中的重复元素Ⅱ
+func DeleteDuplicates(head *ListNode) *ListNode {
+	dummyhead := &ListNode{
+		Val:  -1,
+		Next: head,
+	}
+	pre := dummyhead
+	cur := head
+	for cur != nil {
+		if cur.Next != nil && cur.Next.Val == cur.Val {
+			cur = cur.Next
+			continue
+		} else if pre.Next != cur {
+			pre.Next = cur.Next
+			cur = cur.Next
+		} else {
+			pre = pre.Next
+			cur = cur.Next
+		}
+	}
+	return dummyhead.Next
+
+}
+
+// 旋转链表
+func RotateRight(head *ListNode, k int) *ListNode {
+	if head == nil || head.Next == nil || k == 0 {
+		return head
+	}
+	tail, newtail := head, head
+	n := 1
+	for tail.Next != nil {
+		tail = tail.Next
+		n++
+	}
+	tail.Next = head
+	for i := 1; i < (n - k%n); i++ {
+		newtail = newtail.Next
+	}
+	newhead := newtail.Next
+	newtail.Next = nil
+	return newhead
+}
+
+// 分隔链表
+func Partition(head *ListNode, x int) *ListNode {
+	firstDummy := &ListNode{}
+	secondDummy := &ListNode{}
+	firstCur, secondCur := firstDummy, secondDummy
+	for head != nil {
+		if head.Val < x {
+			firstCur.Next = head
+			firstCur = firstCur.Next
+
+		} else {
+			secondCur.Next = head
+			secondCur = secondCur.Next
+		}
+		head = head.Next
+	}
+	secondCur.Next = nil
+	firstCur.Next = secondDummy.Next
+	return firstDummy.Next
+}
+
+// LRU缓存
+type LRUCache struct {
+	hashmap    map[int]*DListNode
+	capacity   int
+	dummy_head *DListNode
+	dummy_tail *DListNode
+}
+
+type DListNode struct {
+	Val, key int
+	Next     *DListNode
+	Pre      *DListNode
+}
+
+func LRUConstructor(capacity int) LRUCache {
+	obj := LRUCache{
+		hashmap:  make(map[int]*DListNode),
+		capacity: capacity,
+		dummy_head: &DListNode{
+			Val: -1,
+			key: -1,
+		},
+		dummy_tail: &DListNode{
+			Val: -1,
+			key: -1,
+		},
+	}
+	obj.dummy_head.Next = obj.dummy_tail
+	obj.dummy_tail.Pre = obj.dummy_head
+	return obj
+}
+
+func (cache *LRUCache) Get(key int) int {
+	if node, ok := cache.hashmap[key]; ok {
+		cache.MoveToTail(node)
+		return node.Val
+	} else {
+		return -1
+	}
+}
+
+func (cache *LRUCache) Put(key int, value int) {
+	if node, ok := cache.hashmap[key]; ok {
+		cache.MoveToTail(node)
+		node.Val = value
+	} else {
+		node := &DListNode{
+			key: key,
+			Val: value,
+		}
+		if cache.capacity == 0 {
+			cache.RemoveHead()
+			cache.AddToTail(node)
+			cache.hashmap[key] = node
+		} else {
+			cache.AddToTail(node)
+			cache.hashmap[key] = node
+		}
+	}
+}
+
+func (cache *LRUCache) MoveToTail(node *DListNode) {
+	node_pre := node.Pre
+	node_next := node.Next
+	node_pre.Next = node_next
+	node_next.Pre = node_pre
+	tail := cache.dummy_tail.Pre
+	tail.Next = node
+	node.Pre = tail
+	node.Next = cache.dummy_tail
+	cache.dummy_tail.Pre = node
+}
+
+func (cache *LRUCache) MoveToHead(node *DListNode) {
+	node_pre := node.Pre
+	node_next := node.Next
+	node_pre.Next = node_next
+	node_next.Pre = node_pre
+	head := cache.dummy_head.Next
+	head.Pre = node
+	node.Next = head
+	node.Pre = cache.dummy_head
+}
+
+func (cache *LRUCache) RemoveHead() {
+	head := cache.dummy_head.Next
+	next := head.Next
+	head.Next.Pre = cache.dummy_head
+	cache.dummy_head.Next = next
+	delete(cache.hashmap, head.key)
+	cache.capacity++
+}
+
+func (cache *LRUCache) AddToTail(node *DListNode) {
+	tail := cache.dummy_tail.Pre
+	node.Next = cache.dummy_tail
+	node.Pre = tail
+	tail.Next = node
+	cache.dummy_tail.Pre = node
+	cache.capacity--
+}
