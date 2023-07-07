@@ -52,3 +52,74 @@ func checkSymmetric(p, q *TreeNode) bool {
 	}
 	return p.Val == q.Val && checkSymmetric(p.Left, q.Right) && checkSymmetric(p.Right, q.Left)
 }
+
+// 从前序与中序遍历序列构造二叉树
+func BuildTreeOne(preorder []int, inorder []int) *TreeNode {
+	if len(preorder) == 0 {
+		return nil
+	}
+	root := &TreeNode{
+		Val: preorder[0],
+	}
+	i := 0
+	for ; i < len(inorder); i++ {
+		if inorder[i] == root.Val {
+			break
+		}
+	}
+	left := BuildTreeOne(preorder[1:(i+1)], inorder[:i])
+	right := BuildTreeOne(preorder[(i+1):], inorder[(i+1):])
+	root.Left = left
+	root.Right = right
+	return root
+}
+
+// 从中序与后序遍历序列构造二叉树
+func BuildTreeTwo(inorder []int, postorder []int) *TreeNode {
+	post_length := len(postorder)
+	if post_length == 0 {
+		return nil
+	}
+	root := &TreeNode{
+		Val: postorder[post_length-1],
+	}
+	i := 0
+	for ; i < len(inorder); i++ {
+		if inorder[i] == root.Val {
+			break
+		}
+	}
+	root.Right = BuildTreeTwo(inorder[(i+1):], postorder[i:(post_length-1)])
+	root.Left = BuildTreeTwo(inorder[:i], postorder[:i])
+	return root
+}
+
+// 二叉树展开为链表
+func Flatten(root *TreeNode) {
+	var pre func(node *TreeNode) []*TreeNode
+	pre = func(node *TreeNode) []*TreeNode {
+		result := make([]*TreeNode, 0)
+		if node != nil {
+			result = append(result, node)
+			result = append(result, pre(node.Left)...)
+			result = append(result, pre(node.Right)...)
+		}
+		return result
+	}
+	list := pre(root)
+	for i := 1; i < len(list); i++ {
+		p, c := list[i-1], list[i]
+		p.Left, p.Right = nil, c
+	}
+}
+
+// 路径总合
+func hasPathSum(root *TreeNode, targetSum int) bool {
+	if root == nil {
+		return false
+	}
+	if root.Left == nil && root.Right == nil {
+		return root.Val == targetSum
+	}
+	return hasPathSum(root.Left, targetSum-root.Val) || hasPathSum(root.Right, targetSum-root.Val)
+}
