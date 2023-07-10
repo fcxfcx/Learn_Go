@@ -123,3 +123,19 @@ func hasPathSum(root *TreeNode, targetSum int) bool {
 	}
 	return hasPathSum(root.Left, targetSum-root.Val) || hasPathSum(root.Right, targetSum-root.Val)
 }
+
+// 求根节点到叶节点数字之和
+func sumNumbers(root *TreeNode) int {
+	var dfs func(root *TreeNode, preSum int) int
+	dfs = func(root *TreeNode, preSum int) int {
+		if root == nil {
+			return 0
+		}
+		sum := preSum*10 + root.Val
+		if root.Left == nil && root.Right == nil {
+			return sum
+		}
+		return dfs(root.Left, sum) + dfs(root.Right, sum)
+	}
+	return dfs(root, 0)
+}
