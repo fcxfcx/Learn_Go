@@ -1,5 +1,7 @@
 package leetcode
 
+import "math"
+
 type TreeNode struct {
 	Val   int
 	Left  *TreeNode
@@ -114,18 +116,18 @@ func Flatten(root *TreeNode) {
 }
 
 // 路径总合
-func hasPathSum(root *TreeNode, targetSum int) bool {
+func HasPathSum(root *TreeNode, targetSum int) bool {
 	if root == nil {
 		return false
 	}
 	if root.Left == nil && root.Right == nil {
 		return root.Val == targetSum
 	}
-	return hasPathSum(root.Left, targetSum-root.Val) || hasPathSum(root.Right, targetSum-root.Val)
+	return HasPathSum(root.Left, targetSum-root.Val) || HasPathSum(root.Right, targetSum-root.Val)
 }
 
 // 求根节点到叶节点数字之和
-func sumNumbers(root *TreeNode) int {
+func SumNumbers(root *TreeNode) int {
 	var dfs func(root *TreeNode, preSum int) int
 	dfs = func(root *TreeNode, preSum int) int {
 		if root == nil {
@@ -138,4 +140,22 @@ func sumNumbers(root *TreeNode) int {
 		return dfs(root.Left, sum) + dfs(root.Right, sum)
 	}
 	return dfs(root, 0)
+}
+
+// 二叉树中的最大路径和
+func maxPathSum(root *TreeNode) int {
+	max_Sum := math.MinInt
+	var scan func(root *TreeNode) int
+	scan = func(root *TreeNode) int {
+		if root == nil {
+			return 0
+		}
+		left := scan(root.Left)
+		right := scan(root.Right)
+		max_Sum = max(max_Sum, root.Val+left+right)
+		output_max := root.Val + max(left, right)
+		return max(output_max, 0)
+	}
+	scan(root)
+	return max_Sum
 }
