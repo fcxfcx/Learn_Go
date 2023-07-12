@@ -143,7 +143,7 @@ func SumNumbers(root *TreeNode) int {
 }
 
 // 二叉树中的最大路径和
-func maxPathSum(root *TreeNode) int {
+func MaxPathSum(root *TreeNode) int {
 	max_Sum := math.MinInt
 	var scan func(root *TreeNode) int
 	scan = func(root *TreeNode) int {
@@ -158,4 +158,30 @@ func maxPathSum(root *TreeNode) int {
 	}
 	scan(root)
 	return max_Sum
+}
+
+// 二叉树中序遍历迭代器
+type BSTIterator struct {
+	stack []*TreeNode
+	cur   *TreeNode
+}
+
+func BSTConstructor(root *TreeNode) BSTIterator {
+	return BSTIterator{
+		cur: root,
+	}
+}
+
+func (it *BSTIterator) Next() int {
+	for node := it.cur; node != nil; node = node.Left {
+		it.stack = append(it.stack, node)
+	}
+	it.cur, it.stack = it.stack[len(it.stack)-1], it.stack[:len(it.stack)-1]
+	val := it.cur.Val
+	it.cur = it.cur.Right
+	return val
+}
+
+func (it *BSTIterator) HasNext() bool {
+	return it.cur != nil || len(it.stack) != 0
 }
