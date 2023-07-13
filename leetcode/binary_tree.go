@@ -185,3 +185,48 @@ func (it *BSTIterator) Next() int {
 func (it *BSTIterator) HasNext() bool {
 	return it.cur != nil || len(it.stack) != 0
 }
+
+// 二叉树的最近公共祖先
+func LowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
+	if root == nil {
+		return nil
+	}
+	if root == p || root == q {
+		return root
+	}
+	left := LowestCommonAncestor(root.Left, p, q)
+	right := LowestCommonAncestor(root.Right, p, q)
+	if left != nil && right != nil {
+		// 左右都不为空，则只有一种可能即p和q分居左右两侧
+		return root
+	}
+	if left != nil {
+		return left
+	}
+	return right
+}
+
+// 二叉树的右视图
+func RightSideView(root *TreeNode) []int {
+	if root == nil {
+		return make([]int, 0)
+	}
+	cur_stack := make([]*TreeNode, 0)
+	next_stack := make([]*TreeNode, 0)
+	result := make([]int, 0)
+	cur_stack = append(cur_stack, root)
+	for len(cur_stack) != 0 {
+		result = append(result, cur_stack[len(cur_stack)-1].Val)
+		for _, node := range cur_stack {
+			if node.Left != nil {
+				next_stack = append(next_stack, node.Left)
+			}
+			if node.Right != nil {
+				next_stack = append(next_stack, node.Right)
+			}
+		}
+		cur_stack = next_stack
+		next_stack = make([]*TreeNode, 0)
+	}
+	return result
+}
