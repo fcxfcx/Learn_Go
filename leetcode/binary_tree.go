@@ -1,6 +1,8 @@
 package leetcode
 
-import "math"
+import (
+	"math"
+)
 
 type TreeNode struct {
 	Val   int
@@ -229,4 +231,23 @@ func RightSideView(root *TreeNode) []int {
 		next_stack = make([]*TreeNode, 0)
 	}
 	return result
+}
+
+// 二叉搜索树的最小绝对差
+func GetMinimumDifference(root *TreeNode) int {
+	ans, pre := math.MaxInt64, -1
+	var dfs func(node *TreeNode)
+	dfs = func(node *TreeNode) {
+		if node == nil {
+			return
+		}
+		dfs(node.Left)
+		if pre != -1 && node.Val-pre < ans {
+			ans = node.Val - pre
+		}
+		pre = node.Val
+		dfs(node.Right)
+	}
+	dfs(root)
+	return ans
 }
