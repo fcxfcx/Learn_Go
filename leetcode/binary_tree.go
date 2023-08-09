@@ -233,6 +233,92 @@ func RightSideView(root *TreeNode) []int {
 	return result
 }
 
+// 二叉树的层平均值
+func AverageOfLevels(root *TreeNode) []float64 {
+	result := make([]float64, 0)
+	cur_stack := make([]*TreeNode, 0)
+	next_stack := make([]*TreeNode, 0)
+	cur_stack = append(cur_stack, root)
+	temp, tempCount := 0, 0
+	for len(cur_stack) != 0 {
+		for _, node := range cur_stack {
+			temp += node.Val
+			tempCount += 1
+			if node.Left != nil {
+				next_stack = append(next_stack, node.Left)
+			}
+			if node.Right != nil {
+				next_stack = append(next_stack, node.Right)
+			}
+		}
+		result = append(result, float64(temp)/float64(tempCount))
+		temp = 0
+		tempCount = 0
+		cur_stack = next_stack
+		next_stack = make([]*TreeNode, 0)
+	}
+	return result
+}
+
+// 二叉树的层序遍历
+func LevelOrder(root *TreeNode) [][]int {
+	result := make([][]int, 0)
+	if root == nil {
+		return result
+	}
+	queue := make([]*TreeNode, 0)
+	queue = append(queue, root)
+	for len(queue) != 0 {
+		temp := make([]int, 0)
+		n := len(queue)
+		for i := 0; i < n; i++ {
+			node := queue[i]
+			temp = append(temp, node.Val)
+			if node.Left != nil {
+				queue = append(queue, node.Left)
+			}
+			if node.Right != nil {
+				queue = append(queue, node.Right)
+			}
+		}
+		result = append(result, temp)
+		queue = queue[n:]
+	}
+	return result
+}
+
+// 二叉树的锯齿形层序遍历
+func ZigzagLevelOrder(root *TreeNode) [][]int {
+	result := make([][]int, 0)
+	if root == nil {
+		return result
+	}
+	leftToRight := true
+	queue := []*TreeNode{root}
+	for len(queue) != 0 {
+		n := len(queue)
+		temp := make([]int, 0)
+		for i := 0; i < n; i++ {
+			node := queue[i]
+			if leftToRight {
+				temp = append(temp, node.Val)
+			} else {
+				temp = append(temp, queue[n-1-i].Val)
+			}
+			if node.Left != nil {
+				queue = append(queue, node.Left)
+			}
+			if node.Right != nil {
+				queue = append(queue, node.Right)
+			}
+		}
+		result = append(result, temp)
+		queue = queue[n:]
+		leftToRight = !leftToRight
+	}
+	return result
+}
+
 // 二叉搜索树的最小绝对差
 func GetMinimumDifference(root *TreeNode) int {
 	ans, pre := math.MaxInt64, -1
@@ -250,4 +336,39 @@ func GetMinimumDifference(root *TreeNode) int {
 	}
 	dfs(root)
 	return ans
+}
+
+// 二叉搜索树第k小的元素
+func KthSmallest(root *TreeNode, k int) int {
+	stack := make([]*TreeNode, 0)
+	for {
+		for root != nil {
+			stack = append(stack, root)
+			root = root.Left
+		}
+		stack, root = stack[:len(stack)-1], stack[len(stack)-1]
+		k--
+		if k == 0 {
+			return root.Val
+		}
+		root = root.Right
+	}
+}
+
+// 验证二叉搜索树
+func IsValidBST(root *TreeNode) bool {
+	var check func(root *TreeNode, min int, max int) bool
+	check = func(root *TreeNode, min, max int) bool {
+		if root == nil {
+			return true
+		}
+		if root.Val >= min && root.Val <= max {
+			if !check(root.Left, min, root.Val-1) || !check(root.Right, root.Val+1, max) {
+				return false
+			}
+			return true
+		}
+		return false
+	}
+	return check(root, math.MinInt64, math.MaxInt64)
 }
