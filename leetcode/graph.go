@@ -1,5 +1,10 @@
 package leetcode
 
+type GraphNode struct {
+	Val       int
+	Neighbors []*GraphNode
+}
+
 // 岛屿数量
 func NumIslands(grid [][]byte) int {
 	count := 0
@@ -58,4 +63,27 @@ func Solve(board [][]byte) {
 			}
 		}
 	}
+}
+
+func cloneGraph(node *GraphNode) *GraphNode {
+	hashmap := make(map[*GraphNode]*GraphNode)
+	var clone func(node *GraphNode) *GraphNode
+	clone = func(node *GraphNode) *GraphNode {
+		if node == nil {
+			return nil
+		}
+		if item, ok := hashmap[node]; ok {
+			return item
+		}
+		cloneNode := &GraphNode{
+			Val:       node.Val,
+			Neighbors: []*GraphNode{},
+		}
+		hashmap[node] = cloneNode
+		for _, neighbor := range node.Neighbors {
+			cloneNode.Neighbors = append(cloneNode.Neighbors, clone(neighbor))
+		}
+		return cloneNode
+	}
+	return clone(node)
 }
