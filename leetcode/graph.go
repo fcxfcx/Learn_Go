@@ -65,7 +65,8 @@ func Solve(board [][]byte) {
 	}
 }
 
-func cloneGraph(node *GraphNode) *GraphNode {
+// 克隆图
+func CloneGraph(node *GraphNode) *GraphNode {
 	hashmap := make(map[*GraphNode]*GraphNode)
 	var clone func(node *GraphNode) *GraphNode
 	clone = func(node *GraphNode) *GraphNode {
@@ -86,4 +87,77 @@ func cloneGraph(node *GraphNode) *GraphNode {
 		return cloneNode
 	}
 	return clone(node)
+}
+
+// 除法求值
+func CalcEquation(equations [][]string, values []float64, queries [][]string) []float64 {
+	// 第一步：将字符串转为数字，方便构建图
+	hash := make(map[string]int, 0)
+	id := 0
+	for _, e := range equations {
+		// 条件中的两个数，a为被除数，b为除数
+		// 如果没有构建数字的id则新建
+		a, b := e[0], e[1]
+		if _, ok := hash[a]; !ok {
+			hash[a] = id
+			id++
+		}
+		if _, ok := hash[b]; !ok {
+			hash[b] = id
+			id++
+		}
+	}
+
+	// 第二步：构建图
+	// 此时id的大小代表一共有多少个字符串出现在条件里，可以作为图的边长
+	graph := make([][]float64, id)
+	for i := 0; i < id; i++ {
+		graph[i] = make([]float64, id)
+		// 自己除以自己得1
+		graph[i][i] = 1
+	}
+	for index, value := range values {
+		// 条件中的两个数，a为被除数，b为除数
+		a, b := equations[index][0], equations[index][1]
+		// 从哈希表里提取它们的数字id，作为图的坐标
+		graph[hash[a]][hash[b]] = value
+		graph[hash[b]][hash[a]] = 1 / value
+	}
+
+	// 第三步：DFS
+	// 用一个哈希表记录某个数是否已经被访问过了
+	visited := map[int]bool{}
+	temp := 0.
+	var dfs func(index int, target int, value float64)
+	dfs = func(index, target int, value float64) {
+		if index == target {
+			temp = value
+			return
+		}
+		for i := 0; i < id; i++ {
+			// 在index启示作为被除数的地方开始，深度优先搜索尝试走通至除数
+			// 此处设置visited目的是避免无限循环
+			if graph[index][i] != 0 && !visited[i] {
+				visited[i] = true
+				dfs(i, target, value*graph[index][i])
+			}
+		}
+	}
+
+	// 第四步：对需要查询的结果进行搜索
+	res := []float64{}
+	for _, query := range queries {
+		temp = -1.
+		// 首先判断是否有被除数和除数对应的id，如果没有的话说明算不出结果，直接输出-1
+		if _, ok := hash[query[0]]; ok {
+			if _, ok1 := hash[query[1]]; ok1 {
+				// 如果都有对应的id说明可以尝试进行运算，如果中途无法走通则同样返回-1
+				// 开始之前需要将visited重置
+				visited = map[int]bool{}
+				dfs(hash[query[0]], hash[query[1]], 1)
+			}
+		}
+		res = append(res, temp)
+	}
+	return res
 }
