@@ -161,3 +161,138 @@ func CalcEquation(equations [][]string, values []float64, queries [][]string) []
 	}
 	return res
 }
+
+// 课程表
+func CanFinish(numCourses int, prerequisites [][]int) bool {
+	valid := true
+	// 用图来表示学某一课程的前置条件
+	graph := make([][]int, numCourses)
+	for _, p := range prerequisites {
+		// 如果要学a课程必须先学b课程
+		graph[p[0]] = append(graph[p[0]], p[1])
+	}
+	// searched为0代表未搜寻，为1代表正在搜寻，为2代表已搜寻
+	searched := make([]int, numCourses)
+	var dfs func(index int)
+	dfs = func(index int) {
+		// 将当前搜索的课程置为正在搜寻
+		searched[index] = 1
+		for _, c := range graph[index] {
+			if searched[c] == 1 {
+				// 如果探索到了正在搜寻的课程，则说明成环了，无法上完所有课程
+				valid = false
+				return
+			}
+			if searched[c] == 0 {
+				// 对于未搜寻的课程则开始搜寻
+				dfs(c)
+				if !valid {
+					return
+				}
+			}
+		}
+		searched[index] = 2
+	}
+	// 保证整个图不成环
+	for i := 0; i < numCourses && valid; i++ {
+		if searched[i] == 0 {
+			dfs(i)
+		}
+	}
+	return valid
+}
+
+// 课程表Ⅱ
+func FindOrder(numCourses int, prerequisites [][]int) []int {
+	result := []int{}
+	// 构建邻接表
+	afterMp := map[int][]int{}
+	// 储存每个课程需要多少前置课
+	indegree := make([]int, numCourses)
+	for _, p := range prerequisites {
+		// 后修课程和先修课程
+		after, pre := p[0], p[1]
+		afterMp[pre] = append(afterMp[pre], after)
+		indegree[after] += 1
+	}
+	// 使用队列来从前置课开始搜寻
+	queue := []int{}
+	// 学过的课程数量
+	alreadyLearned := 0
+	// 将无前置课的课程先初始化到队列中
+	for i, v := range indegree {
+		if v == 0 {
+			queue = append(queue, i)
+		}
+	}
+	// 不断读取队列中无需前置课的课程
+	for len(queue) > 0 {
+		alreadyLearned++
+		temp := queue[0]
+		result = append(result, temp)
+		queue = queue[1:]
+		for _, after := range afterMp[temp] {
+			// 学习了前置课后，对应的后修课程所需前置课数量减一
+			indegree[after]--
+			if indegree[after] == 0 {
+				// 如果后修课程已无前置课程，则入队
+				queue = append(queue, after)
+			}
+		}
+	}
+	if alreadyLearned == numCourses {
+		return result
+	} else {
+		return nil
+	}
+}
+
+func SnakesAndLadders(board [][]int) int {
+	n := len(board)
+	visited := make([]bool, n*n+1)
+	// 构造一个结构体存储（当前id，当前使用步数）
+	type pair struct{ index, step int }
+	// 构造队列，加入起点
+	queue := []pair{{1, 0}}
+	for len(queue) > 0 {
+		// 出队操作
+		tempPair := queue[0]
+		queue = queue[1:]
+		// 遍历所有走法
+		for i := 1; i <= 6; i++ {
+			tempID := tempPair.index + i
+			if tempID > n*n {
+				// 超出边界的情况
+				break
+			}
+			r, c := idToRC(tempID, n)
+			if board[r][c] > 0 {
+				// 存在蛇或者梯子的情况
+				tempID = board[r][c]
+			}
+			if tempID == n*n {
+				// 到达终点
+				return tempPair.step + 1
+			}
+			if !visited[tempID] {
+				visited[tempID] = true
+				queue = append(queue, pair{tempID, tempPair.step + 1})
+			}
+		}
+	}
+	// 如果到达不了返回-1
+	return -1
+}
+
+func idToRC(index int, n int) (r, c int) {
+	// 将蛇形棋盘中的ID转换为矩阵中的行列
+	r = (index - 1) / n
+	c = (index - 1) % n
+	if r%2 == 1 {
+		// 如果是偶数排需要倒序
+		c = n - c - 1
+	}
+	// 棋盘本身是从下到上排列的
+	r = n - r - 1
+	return
+}
