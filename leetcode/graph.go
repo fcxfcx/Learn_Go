@@ -296,3 +296,73 @@ func idToRC(index int, n int) (r, c int) {
 	r = n - r - 1
 	return
 }
+
+// 最小基因变化
+func MinMutation(startGene string, endGene string, bank []string) int {
+	type pair struct {
+		step int
+		gene string
+	}
+	visited := make([]bool, len(bank))
+	queue := []pair{{0, startGene}}
+	for len(queue) > 0 {
+		tempGene := queue[0]
+		queue = queue[1:]
+		for id, b := range bank {
+			if !visited[id] {
+				if canTrans(tempGene.gene, b) {
+					visited[id] = true
+					if b == endGene {
+						return tempGene.step + 1
+					} else {
+						queue = append(queue, pair{tempGene.step + 1, b})
+					}
+				}
+			}
+		}
+	}
+	return -1
+}
+
+func canTrans(startGene string, endGene string) bool {
+	// 判断两个基因能否转换过去
+	diff := 0
+	for i := 0; i < 8; i++ {
+		if startGene[i] != endGene[i] {
+			diff++
+		}
+	}
+	return diff == 1
+}
+
+// 单词接龙
+func LadderLength(beginWord string, endWord string, wordList []string) int {
+	wordMap := map[string]bool{}
+	for _, w := range wordList {
+		wordMap[w] = true
+	}
+	queue := []string{beginWord}
+	level := 1
+	for len(queue) > 0 {
+		levelSize := len(queue)
+		for i := 0; i < levelSize; i++ {
+			tempWord := queue[0]
+			queue = queue[1:]
+			if tempWord == endWord {
+				return level
+			}
+			for c := 0; c < len(tempWord); c++ {
+				// 改变单词中每一个字母，看是否有在词典里的
+				for j := 'a'; j < 'z'; j++ {
+					changeWord := tempWord[:c] + string(j) + tempWord[c+1:]
+					if wordMap[changeWord] {
+						queue = append(queue, changeWord)
+						wordMap[changeWord] = false
+					}
+				}
+			}
+		}
+		level++
+	}
+	return 0
+}
