@@ -5,11 +5,12 @@ import (
 )
 
 func main() {
-	cache := leetcode.LRUConstructor(2)
-	cache.Put(2, 1)
-	cache.Put(2, 2)
-	cache.Get(2)
-	cache.Put(1, 1)
-	cache.Put(4, 1)
-	cache.Get(2)
+	trie := leetcode.WDConstructor()
+	trie.AddWord("a")
+	trie.AddWord("a")
+	trie.Search(".")
+	trie.Search("a")
+	trie.Search("aa")
+	trie.Search(".a")
+	trie.Search("a.")
 }
