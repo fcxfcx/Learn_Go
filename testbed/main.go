@@ -5,12 +5,7 @@ import (
 )
 
 func main() {
-	trie := leetcode.WDConstructor()
-	trie.AddWord("a")
-	trie.AddWord("a")
-	trie.Search(".")
-	trie.Search("a")
-	trie.Search("aa")
-	trie.Search(".a")
-	trie.Search("a.")
+	board := [][]byte{{'a', 'b'}}
+	words := []string{"ab"}
+	leetcode.FindWords(board, words)
 }

@@ -90,3 +90,74 @@ func (wd *WordDictionary) Search(word string) bool {
 	}
 	return dfs(word, wd)
 }
+
+// 单词搜索Ⅱ
+type Dic struct {
+	children map[byte]*Dic
+	word     string
+}
+
+func (dic *Dic) Insert(word string) {
+	node := dic
+	for i := range word {
+		ch := word[i]
+		if node.children[ch] == nil {
+			node.children[ch] = &Dic{
+				children: map[byte]*Dic{},
+			}
+		}
+		node = node.children[ch]
+	}
+	node.word = word
+}
+
+func FindWords(board [][]byte, words []string) []string {
+	dic := &Dic{children: map[byte]*Dic{}}
+	m, n := len(board), len(board[0])
+	result := []string{}
+	for _, word := range words {
+		dic.Insert(word)
+	}
+
+	var dfs func(i int, j int, node *Dic)
+	dfs = func(i, j int, node *Dic) {
+		ch := board[i][j]
+		nxt := node.children[ch]
+		if nxt == nil {
+			// 不含当前词
+			return
+		}
+		if nxt.word != "" {
+			// 一个词遍历完则加入到结果
+			result = append(result, nxt.word)
+			// 删除该词避免重复取到
+			nxt.word = ""
+		}
+
+		if len(nxt.children) > 0 {
+			// 非根节点
+			next := [][]int{{i + 1, j}, {i - 1, j}, {i, j + 1}, {i, j - 1}}
+			board[i][j] = '#'
+			for _, nextPoint := range next {
+				x, y := nextPoint[0], nextPoint[1]
+				if x < 0 || x >= m || y < 0 || y >= n || board[x][y] == '#' {
+					// 触碰边界则跳过
+					continue
+				}
+				dfs(x, y, nxt)
+			}
+			board[i][j] = ch
+		}
+
+		if len(nxt.children) == 0 {
+			// 如果某一个子路径上所有单词都被读取，则进行剪枝操作
+			delete(node.children, ch)
+		}
+	}
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			dfs(i, j, dic)
+		}
+	}
+	return result
+}
