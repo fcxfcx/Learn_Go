@@ -5,7 +5,6 @@ import (
 )
 
 func main() {
-	board := [][]byte{{'a', 'b'}}
-	words := []string{"ab"}
-	leetcode.FindWords(board, words)
+	nums := []int{1, 2, 3}
+	leetcode.Permute(nums)
 }
