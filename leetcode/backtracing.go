@@ -85,7 +85,7 @@ func Permute(nums []int) (ans [][]int) {
 }
 
 // 组合总合
-func combinationSum(candidates []int, target int) (ans [][]int) {
+func CombinationSum(candidates []int, target int) (ans [][]int) {
 	path := []int{}
 	// 升序排序
 	sort.Slice(candidates, func(i, j int) bool {
@@ -112,4 +112,177 @@ func combinationSum(candidates []int, target int) (ans [][]int) {
 	}
 	dfs(0)
 	return
+}
+
+// N 皇后
+func SolveNQueens(n int) (ans [][]string) {
+	// columns代表哪些列已经站了皇后
+	columns := make(map[int]bool, 0)
+	// diagonals1和2代表两个对角线是否站了皇后
+	// 左上到右下，行列之差相等，左下到右上，行列之和相等，因此可以用一个数表示一条线
+	diagonals1, diagonals2 := map[int]bool{}, map[int]bool{}
+	// 每一行肯定都会放皇后，所以可以用一个数组表示每行放在哪一列上面
+	queens := make([]int, n)
+
+	var backtrace func(row int)
+	backtrace = func(row int) {
+		if row == n {
+			// 放满了则找到了一个可行的解
+			board := generateBoard(queens, n)
+			ans = append(ans, board)
+			return
+		}
+		// 遍历当前行，寻找可能的解
+		for i := 0; i < n; i++ {
+			if columns[i] {
+				// 同列有放皇后
+				continue
+			}
+			if diagonals1[row-i] {
+				// 左上到右下对角线有放皇后
+				continue
+			}
+			if diagonals2[row+i] {
+				// 左下到右上对角线有放皇后
+				continue
+			}
+			// 都没有放则可以放当前位置
+			queens[row] = i
+			columns[i] = true
+			diagonals1[row-i] = true
+			diagonals2[row+i] = true
+			// 继续考虑下一行
+			backtrace(row + 1)
+			// 回溯后将当前位置放置的皇后取消
+			queens[row] = -1
+			delete(columns, i)
+			delete(diagonals1, row-i)
+			delete(diagonals2, row+i)
+		}
+	}
+	backtrace(0)
+	return
+}
+
+func generateBoard(queens []int, n int) (board []string) {
+	for _, queen := range queens {
+		row := make([]byte, n)
+		for i := 0; i < n; i++ {
+			row[i] = '.'
+		}
+		row[queen] = 'Q'
+		board = append(board, string(row))
+	}
+	return
+}
+
+// N皇后Ⅱ
+func TotalNQueens(n int) int {
+	// 此题是N皇后的简单版本，只需要判读有几个解就行了，因此稍微改动代码
+	total := 0
+	// columns代表哪些列已经站了皇后
+	columns := make(map[int]bool, 0)
+	// diagonals1和2代表两个对角线是否站了皇后
+	// 左上到右下，行列之差相等，左下到右上，行列之和相等，因此可以用一个数表示一条线
+	diagonals1, diagonals2 := map[int]bool{}, map[int]bool{}
+
+	var backtrace func(row int)
+	backtrace = func(row int) {
+		if row == n {
+			total += 1
+			return
+		}
+		// 遍历当前行，寻找可能的解
+		for i := 0; i < n; i++ {
+			if columns[i] {
+				// 同列有放皇后
+				continue
+			}
+			if diagonals1[row-i] {
+				// 左上到右下对角线有放皇后
+				continue
+			}
+			if diagonals2[row+i] {
+				// 左下到右上对角线有放皇后
+				continue
+			}
+			// 都没有放则可以放当前位置
+			columns[i] = true
+			diagonals1[row-i] = true
+			diagonals2[row+i] = true
+			// 继续考虑下一行
+			backtrace(row + 1)
+			// 回溯后将当前位置放置的皇后取消
+			delete(columns, i)
+			delete(diagonals1, row-i)
+			delete(diagonals2, row+i)
+		}
+	}
+	backtrace(0)
+	return total
+}
+
+// 括号生成
+func GenerateParenthesis(n int) (ans []string) {
+	m := n * 2
+	path := make([]byte, m)
+	var dfs func(index int, left int)
+	dfs = func(index int, left int) {
+		if index == m {
+			tmp := make([]byte, m)
+			copy(tmp, path)
+			ans = append(ans, string(tmp))
+			return
+		}
+		if left < n {
+			// 可以填左括号
+			path[index] = '('
+			dfs(index+1, left+1)
+		}
+		if index-left < left {
+			// 可以填右括号
+			path[index] = ')'
+			dfs(index+1, left)
+		}
+	}
+	dfs(0, 0)
+	return
+}
+
+// 单词搜索
+func Exist(board [][]byte, word string) bool {
+	m, n := len(board), len(board[0])
+	next := [][]int{{0, 1}, {0, -1}, {1, 0}, {-1, 0}}
+	var dfs func(i, j, index int) bool
+	dfs = func(i, j, index int) bool {
+		ch := board[i][j]
+		if ch != word[index] {
+			return false
+		}
+		if index == len(word)-1 {
+			return true
+		}
+		board[i][j] = '#'
+		for _, new := range next {
+			nx := i + new[0]
+			ny := j + new[1]
+			if nx < 0 || nx >= m || ny < 0 || ny >= n || board[nx][ny] == '#' {
+				// 越界或已选用
+				continue
+			}
+			if dfs(nx, ny, index+1) {
+				return true
+			}
+		}
+		board[i][j] = ch
+		return false
+	}
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			if dfs(i, j, 0) {
+				return true
+			}
+		}
+	}
+	return false
 }
