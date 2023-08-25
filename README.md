@@ -9,6 +9,7 @@ go语言后端框架学习
 - array: 字符串
 - backtracing: 回溯
 - binary_tree: 二叉树
+- divide: 分治算法
 - graph: 图
 - hashmap: 哈希表
 - interval: 区间

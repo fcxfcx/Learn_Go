@@ -1,9 +1,9 @@
 package gee
 
 import (
-	"fmt"
 	"log"
 	"net/http"
+	"strings"
 )
 
 // 处理函数类
@@ -33,8 +33,14 @@ func (engine *Engine) Run(addr string) (err error) {
 
 // 寻找对应的处理器并对请求进行回应
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	var middlewares []HandlerFunc
+	for _, group := range engine.groups {
+		if strings.HasPrefix(req.URL.Path, group.prefix) {
+			middlewares = append(middlewares, group.middlewares...)
+		}
+	}
 	c := newContext(w, req)
-	fmt.Println(c)
+	c.handlers = middlewares
 	engine.router.handle(c)
 }
 
@@ -74,4 +80,9 @@ func (group *RouterGroup) GET(pattern string, handler HandlerFunc) {
 // 添加GET请求下的路由
 func (group *RouterGroup) POST(pattern string, handler HandlerFunc) {
 	group.addRoute("POST", pattern, handler)
+}
+
+// 向分组路由添加中间件
+func (group *RouterGroup) Use(middlewares ...HandlerFunc) {
+	group.middlewares = append(group.middlewares, middlewares...)
 }
