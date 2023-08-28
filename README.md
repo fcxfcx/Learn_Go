@@ -13,6 +13,7 @@ go语言后端框架学习
 - graph: 图
 - hashmap: 哈希表
 - interval: 区间
+- kadane:kadane算法
 - link_list: 链表
 - matrix: 矩阵
 - sliding_window: 滑动窗口
