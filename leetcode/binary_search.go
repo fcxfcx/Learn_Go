@@ -111,3 +111,103 @@ func SearchRoatedArray(nums []int, target int) int {
 	}
 	return -1
 }
+
+// 在排序数组中查找元素的第一个和最后一个位置
+func SearchRange(nums []int, target int) []int {
+	// 搜索左边界
+	left := binarySerch(nums, target)
+	// 搜索比target大1的左边界，下标减一即为target的右边界
+	right := binarySerch(nums, target+1)
+	if left == len(nums) || nums[left] != target {
+		// 如果不含有target
+		return []int{-1, -1}
+	} else {
+		return []int{left, right - 1}
+	}
+}
+
+func binarySerch(nums []int, target int) int {
+	// 使用二分查找在升序数组寻找第一个大于等于target的下标（左边界）
+	n := len(nums)
+	left, right := 0, n-1
+	for left <= right {
+		mid := (left + right) / 2
+		if nums[mid] >= target {
+			// 左移右边界
+			right = mid - 1
+		} else {
+			// 右移左边界
+			left = mid + 1
+		}
+	}
+	return left
+}
+
+// 寻找旋转数组中的最小值
+func FindMin(nums []int) int {
+	n := len(nums)
+	left, right := 0, n-1
+	for left < right {
+		mid := (left + right) / 2
+		if nums[mid] < nums[n-1] {
+			// 如果中点小于最右侧，那么右边区域可以排除
+			right = mid
+		} else {
+			// 否则的话说明左边区域可以排除
+			left = mid + 1
+		}
+	}
+	return nums[left]
+}
+
+// 寻找两个正序数组的中位数
+func FindMedianSortedArrays(nums1 []int, nums2 []int) float64 {
+	m, n := len(nums1), len(nums2)
+	half := (m + n) / 2
+	if (m+n)%2 == 0 {
+		// 如果两个数组长度和为偶数，则需要寻找的是half和half-1处的两个数字(对应数组索引)
+		// 索引映射到第k小的数，需要加一
+		num1 := getKthMinNumber(nums1, nums2, half+1)
+		num2 := getKthMinNumber(nums1, nums2, half)
+		// 注意这里不能先除再转float否则会在除法部分就丢弃小数部分
+		return float64(num1+num2) / 2.0
+	} else {
+		// 如果两个数组长度和为奇数，则需要寻找的是half处的数字(对应数组索引)
+		// 索引映射到第k小的数，需要加一
+		return float64(getKthMinNumber(nums1, nums2, half+1))
+	}
+}
+
+func getKthMinNumber(nums1, nums2 []int, k int) int {
+	// 获取两个数组中第k小的数字
+	index1, index2 := 0, 0
+	for {
+		if index1 == len(nums1) {
+			// 如果第一个数组已经排除完毕，则直接从第二个数组取
+			// 取的是从当前索引开始的第k个数字
+			return nums2[index2+k-1]
+		}
+		if index2 == len(nums2) {
+			// 对于第二个数组同理
+			return nums1[index1+k-1]
+		}
+		if k == 1 {
+			// 如果取最小的数，则比较两个数组的第一个数
+			return min(nums1[index1], nums2[index2])
+		}
+		half := k / 2
+		// 确定两个数组往后第k/2个数字，同时避免越界
+		newIndex1 := min(index1+half, len(nums1)) - 1
+		newIndex2 := min(index2+half, len(nums2)) - 1
+		if nums1[newIndex1] >= nums2[newIndex2] {
+			// 如果第一个数组的数字大，则第二个数组的前部分可以排除
+			// 排除后，需要寻找的数字数量也减少对应的数目
+			k -= (newIndex2 - index2) + 1
+			index2 = newIndex2 + 1
+		} else {
+			// 反之亦然
+			k -= (newIndex1 - index1) + 1
+			index1 = newIndex1 + 1
+		}
+	}
+}
