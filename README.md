@@ -12,6 +12,7 @@ go语言后端框架学习
 - divide: 分治算法
 - graph: 图
 - hashmap: 哈希表
+- heap：堆
 - interval: 区间
 - kadane:kadane算法
 - link_list: 链表
