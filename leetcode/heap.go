@@ -132,3 +132,39 @@ func findMaximizedCapital(k int, w int, profits []int, capital []int) int {
 	}
 	return w
 }
+
+// 使用最小堆
+// 此处使用Go语言自带的堆接口
+type tuple struct{ total, i, j int }
+type TupleHeap []tuple
+
+func (hp TupleHeap) Len() int            { return len(hp) }
+func (hp TupleHeap) Swap(i, j int)       { hp[i], hp[j] = hp[j], hp[i] }
+func (hp TupleHeap) Less(i, j int) bool  { return hp[i].total < hp[j].total }
+func (hp *TupleHeap) Push(x interface{}) { *hp = append(*hp, x.(tuple)) }
+func (hp *TupleHeap) Pop() interface{} {
+	n := len(*hp)
+	result := (*hp)[n-1]
+	*hp = (*hp)[:n-1]
+	return result
+}
+
+// 查找和最小的K对数字
+func KSmallestPairs(nums1 []int, nums2 []int, k int) (result [][]int) {
+	m, n := len(nums1), len(nums2)
+	hp := &TupleHeap{}
+	for i := 0; i < k && i < m; i++ {
+		// 将(i,0)全部加入堆中
+		heap.Push(hp, tuple{nums1[i] + nums2[0], i, 0})
+	}
+	for hp.Len() > 0 && len(result) < k {
+		t := heap.Pop(hp).(tuple)
+		i, j := t.i, t.j
+		result = append(result, []int{nums1[i], nums2[j]})
+		if j+1 < n {
+			// 如果第二个数组还有数字，则加入i, j+1
+			heap.Push(hp, tuple{nums1[i] + nums2[j+1], i, j + 1})
+		}
+	}
+	return
+}
