@@ -7,22 +7,22 @@ import (
 )
 
 // 使用完全二叉树实现最小堆，不依靠Go语言自己的接口
-type MinHeap struct {
+type DIYMinHeap struct {
 	arr []int
 }
 
-func NewMinHeap() *MinHeap {
+func NewMinHeap() *DIYMinHeap {
 	// 构造方法
-	return &MinHeap{}
+	return &DIYMinHeap{}
 }
 
-func (h *MinHeap) Push(val int) {
+func (h *DIYMinHeap) Push(val int) {
 	// 新数字加入到末尾，然后上浮
 	h.arr = append(h.arr, val)
 	h.heapifyUp(len(h.arr) - 1)
 }
 
-func (h *MinHeap) Pop() int {
+func (h *DIYMinHeap) Pop() int {
 	if len(h.arr) == 0 {
 		panic("Heap is empty")
 	}
@@ -42,7 +42,7 @@ func (h *MinHeap) Pop() int {
 	return root
 }
 
-func (h *MinHeap) heapifyUp(index int) {
+func (h *DIYMinHeap) heapifyUp(index int) {
 	// 对index点处的数进行上浮操作
 	parent := (index - 1) / 2
 
@@ -55,7 +55,7 @@ func (h *MinHeap) heapifyUp(index int) {
 	}
 }
 
-func (h *MinHeap) heapifyDown(index int) {
+func (h *DIYMinHeap) heapifyDown(index int) {
 	for {
 		left := 2*index + 1
 		right := 2*index + 2
@@ -79,7 +79,7 @@ func (h *MinHeap) heapifyDown(index int) {
 
 // 数组中第k个最大的元素
 func FindKthLargest(nums []int, k int) int {
-	hp := &MinHeap{}
+	hp := &DIYMinHeap{}
 	for _, num := range nums {
 		hp.Push(num)
 	}
@@ -90,23 +90,8 @@ func FindKthLargest(nums []int, k int) int {
 	return hp.Pop()
 }
 
-// 使用最大堆的方法
-// 此处使用的是go语言自带的heap.Interface接口来实现
-type MaxHeap struct{ sort.IntSlice }
-
-func (hp MaxHeap) Len() int            { return len(hp.IntSlice) }
-func (hp MaxHeap) Less(i, j int) bool  { return hp.IntSlice[i] > hp.IntSlice[j] }
-func (hp MaxHeap) Swap(i, j int)       { hp.IntSlice[i], hp.IntSlice[j] = hp.IntSlice[j], hp.IntSlice[i] }
-func (hp *MaxHeap) Push(x interface{}) { hp.IntSlice = append(hp.IntSlice, x.(int)) }
-func (hp *MaxHeap) Pop() interface{} {
-	n := len(hp.IntSlice)
-	result := (hp.IntSlice)[n-1]
-	hp.IntSlice = hp.IntSlice[:n-1]
-	return result
-}
-
 // IPO
-func findMaximizedCapital(k int, w int, profits []int, capital []int) int {
+func FindMaximizedCapital(k int, w int, profits []int, capital []int) int {
 	n := len(profits)
 	type pair struct{ c, p int }
 	arr := make([]pair, n)
@@ -168,3 +153,110 @@ func KSmallestPairs(nums1 []int, nums2 []int, k int) (result [][]int) {
 	}
 	return
 }
+
+// 数据流的中位数
+type MedianFinder struct {
+	maxHeap *MaxHeap // 左边存最大堆
+	minHeap *MinHeap // 右边存最小堆
+	length  int
+}
+
+func MFConstructor() MedianFinder {
+	return MedianFinder{
+		minHeap: &MinHeap{},
+		maxHeap: &MaxHeap{},
+		length:  0,
+	}
+}
+
+func (mf *MedianFinder) AddNum(num int) {
+	n := mf.length
+	length_min, length_max := mf.minHeap.Len(), mf.maxHeap.Len()
+	if n%2 == 0 {
+		// 如果是偶数的话
+		if mf.maxHeap.Len() == 0 || num < mf.maxHeap.Peek().(int) {
+			// 当前数比左边最大值小，或者左边长度为零，则放左边
+			heap.Push(mf.maxHeap, num)
+		} else {
+			// 否则放右边
+			heap.Push(mf.minHeap, num)
+		}
+	} else {
+		// 如果是奇数，则必有一边数量比另一边大一
+		if length_max > length_min {
+			// 左边多，则加入右边
+			if num < mf.maxHeap.Peek().(int) {
+				// 如果需要加入的数比左边的最大值要小，那它本来应该加入左边，因此需要调整左右长度
+				// 将左边最大的加入到右边，然后将当前数字加入左边，这样左右再次均衡长度
+				leftMax := heap.Pop(mf.maxHeap).(int)
+				heap.Push(mf.maxHeap, num)
+				heap.Push(mf.minHeap, leftMax)
+			} else {
+				// 否则正常加入右边
+				heap.Push(mf.minHeap, num)
+			}
+		} else {
+			// 如果右边多就加入左边，同上
+			if num > mf.minHeap.Peek().(int) {
+				// 如果需要加入的数比右边的最小值大，则本来应该加入右边，因此需要调整长度
+				// 将右边最小的值加入到左边，然后将当前数字加入右边
+				rightMin := heap.Pop(mf.minHeap).(int)
+				heap.Push(mf.minHeap, num)
+				heap.Push(mf.maxHeap, rightMin)
+			} else {
+				// 否则正常加入左边
+				heap.Push(mf.maxHeap, num)
+			}
+		}
+	}
+	mf.length += 1
+}
+
+func (mf *MedianFinder) FindMedian() float64 {
+	if mf.maxHeap.Len() == 0 {
+		return float64(mf.minHeap.Peek().(int))
+	} else if mf.minHeap.Len() == 0 {
+		return float64(mf.maxHeap.Peek().(int))
+	}
+	leftMax := mf.maxHeap.Peek().(int)
+	rightMin := mf.minHeap.Peek().(int)
+	if mf.length%2 == 0 {
+		return float64(leftMax+rightMin) / 2.0
+	} else {
+		if mf.maxHeap.Len() > mf.minHeap.Len() {
+			return float64(leftMax)
+		} else {
+			return float64(rightMin)
+		}
+	}
+}
+
+// 使用Go语言自带的接口实现最大堆和最小堆
+// 此处使用的是go语言自带的heap.Interface接口来实现
+type MaxHeap struct{ sort.IntSlice }
+
+func (hp MaxHeap) Len() int            { return len(hp.IntSlice) }
+func (hp MaxHeap) Less(i, j int) bool  { return hp.IntSlice[i] > hp.IntSlice[j] }
+func (hp MaxHeap) Swap(i, j int)       { hp.IntSlice[i], hp.IntSlice[j] = hp.IntSlice[j], hp.IntSlice[i] }
+func (hp *MaxHeap) Push(x interface{}) { hp.IntSlice = append(hp.IntSlice, x.(int)) }
+func (hp *MaxHeap) Pop() interface{} {
+	n := len(hp.IntSlice)
+	result := (hp.IntSlice)[n-1]
+	hp.IntSlice = hp.IntSlice[:n-1]
+	return result
+}
+func (hp MaxHeap) Peek() interface{} { return hp.IntSlice[0] }
+
+type MinHeap struct{ sort.IntSlice }
+
+func (hp MinHeap) Len() int            { return len(hp.IntSlice) }
+func (hp MinHeap) Less(i, j int) bool  { return hp.IntSlice[i] < hp.IntSlice[j] }
+func (hp MinHeap) Swap(i, j int)       { hp.IntSlice[i], hp.IntSlice[j] = hp.IntSlice[j], hp.IntSlice[i] }
+func (hp *MinHeap) Push(x interface{}) { hp.IntSlice = append(hp.IntSlice, x.(int)) }
+func (hp *MinHeap) Pop() interface{} {
+	n := len(hp.IntSlice)
+	result := (hp.IntSlice)[n-1]
+	hp.IntSlice = hp.IntSlice[:n-1]
+	return result
+}
+func (hp MinHeap) Peek() interface{} { return hp.IntSlice[0] }

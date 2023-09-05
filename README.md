@@ -8,7 +8,9 @@ go语言后端框架学习
 面试经典150题
 - array: 字符串
 - backtracing: 回溯
+- binary_search: 二分搜索
 - binary_tree: 二叉树
+- bit_manipulation: 位运算
 - divide: 分治算法
 - graph: 图
 - hashmap: 哈希表
