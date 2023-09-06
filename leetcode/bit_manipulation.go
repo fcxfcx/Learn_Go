@@ -2,6 +2,7 @@ package leetcode
 
 import "strconv"
 
+// 二进制求和
 func AddBinary(a string, b string) string {
 	m, n := len(a), len(b)
 	result := make([]int, 0)
@@ -32,4 +33,22 @@ func AddBinary(a string, b string) string {
 		stringAns = append(stringAns, byte('0'+result[j]))
 	}
 	return string(stringAns)
+}
+
+// 颠倒二进制位
+func ReverseBits(num uint32) uint32 {
+	var res uint32
+	for i := 0; i < 32 && num > 0; i++ {
+		res = (res << 1) | (num & 1)
+		num = num >> 1
+	}
+	return res
+}
+
+// 位1的个数
+func HammingWeight(num uint32) (count int) {
+	for ; num > 0; num &= (num - 1) {
+		count++
+	}
+	return
 }
