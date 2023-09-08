@@ -18,6 +18,7 @@ go语言后端框架学习
 - interval: 区间
 - kadane:kadane算法
 - link_list: 链表
+- math: 数学
 - matrix: 矩阵
 - sliding_window: 滑动窗口
 - stack: 栈

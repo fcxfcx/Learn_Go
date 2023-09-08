@@ -94,3 +94,4 @@ func RangeBitwiseAnd(left int, right int) int {
 	}
 	return left << shift
 }
+
