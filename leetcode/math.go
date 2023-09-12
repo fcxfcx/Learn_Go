@@ -1,6 +1,9 @@
 package leetcode
 
-import "math"
+import (
+	"math"
+	"strconv"
+)
 
 // 回文数
 func IsPalindromeInt(x int) bool {
@@ -66,4 +69,82 @@ func MySqrt(x int) (ans int) {
 		}
 	}
 	return
+}
+
+// Pow(x,n)
+func MyPow(x float64, n int) float64 {
+	var quickMul func(x float64, n int) float64
+	quickMul = func(x float64, n int) float64 {
+		if n == 0 {
+			return 1
+		}
+		y := quickMul(x, n/2)
+		if n%2 == 0 {
+			// 可以拆分成相同的两部分
+			return y * y
+		}
+		return y * y * x
+	}
+	if n >= 0 {
+		return quickMul(x, n)
+	}
+	return 1 / quickMul(x, -n)
+}
+
+// 直线上最多的点数
+func MaxPoints(points [][]int) (ans int) {
+	n := len(points)
+	// 特判
+	if n < 3 {
+		// 点小于三个则直接返回点的数量
+		return n
+	}
+	for i, p := range points {
+		if ans > n-i || ans > n/2 {
+			// 遍历到第i个点的时候，最多就能找到n-i个点在线上，因为前面都遍历过了
+			// 因此如果找到的最大值已经大于这个值了，就没必要再找了
+			// 另外，如果找到的最大值已经比一半的点多了，就不用再找了
+			break
+		}
+		count := map[string]int{}
+		for _, q := range points[i+1:] {
+			x, y := p[0]-q[0], p[1]-q[1]
+			if x == 0 {
+				y = 1
+			} else if y == 0 {
+				x = 1
+			} else {
+				if y < 0 {
+					// 保证如果有负数只让分子为负数，避免哈希表重复记录同一条线
+					x, y = -x, -y
+				}
+				// 求最大公约数，将直线表示为最简形式
+				g := gcd(abs(x), abs(y))
+				x /= g
+				y /= g
+			}
+			// 斜率相同则在一条直线上
+			key := strconv.Itoa(x) + "@" + strconv.Itoa(y)
+			count[key]++
+		}
+		for _, c := range count {
+			ans = max(ans, c+1)
+		}
+	}
+	return
+}
+
+func gcd(a, b int) int {
+	// 辗转相除法求最大公约数
+	for b != 0 {
+		b, a = a%b, b
+	}
+	return a
+}
+
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
 }
