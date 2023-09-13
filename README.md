@@ -12,6 +12,7 @@ go语言后端框架学习
 - binary_tree: 二叉树
 - bit_manipulation: 位运算
 - divide: 分治算法
+- dynamic_programming：动态规划
 - graph: 图
 - hashmap: 哈希表
 - heap：堆
