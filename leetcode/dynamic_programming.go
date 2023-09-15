@@ -85,3 +85,31 @@ func CoinChange(coins []int, amount int) int {
 	}
 	return -1
 }
+
+// 最长递增子序列
+func LengthOfLIS(nums []int) int {
+	if len(nums) < 2 {
+		return len(nums)
+	}
+	res := 0
+	tail := make([]int, len(nums))
+	tail[0] = nums[0]
+	for _, num := range nums {
+		i, j := 0, res
+		for i < j {
+			// 使用二分法查找当前数应该插入的位置
+			m := (i + j) / 2
+			if num > tail[m] {
+				i = m + 1
+			} else {
+				j = m
+			}
+		}
+		tail[i] = num
+		if j == res {
+			// 如果当前数插入的地方是最后，则代表结果加一
+			res += 1
+		}
+	}
+	return res
+}
