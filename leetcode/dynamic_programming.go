@@ -113,3 +113,42 @@ func LengthOfLIS(nums []int) int {
 	}
 	return res
 }
+
+// 三角形的最短路径和
+func MinimumTotal(triangle [][]int) int {
+	layer := len(triangle)
+	if layer == 1 {
+		return triangle[0][0]
+	}
+	dp := make([]int, layer+1)
+	for i := layer - 1; i >= 0; i-- {
+		// 从下往上推导
+		tempT := triangle[i]
+		for j := 0; j < len(tempT); j++ {
+			// 往上推导一层，从两个可连接路径中选取更小的那个
+			dp[j] = min(dp[j], dp[j+1]) + tempT[j]
+		}
+	}
+	return dp[0]
+}
+
+func MinPathSum(grid [][]int) int {
+	m, n := len(grid), len(grid[0])
+	// 使用原数组，减少空间消耗
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			if i == 0 && j == 0 {
+				continue
+			} else if i == 0 {
+				// 上边界，只能从左来
+				grid[i][j] = grid[i][j-1] + grid[i][j]
+			} else if j == 0 {
+				// 左边界，只能从上来
+				grid[i][j] = grid[i-1][j] + grid[i][j]
+			} else {
+				grid[i][j] = min(grid[i-1][j], grid[i][j-1]) + grid[i][j]
+			}
+		}
+	}
+	return grid[m-1][n-1]
+}
