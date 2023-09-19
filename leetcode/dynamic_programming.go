@@ -132,6 +132,7 @@ func MinimumTotal(triangle [][]int) int {
 	return dp[0]
 }
 
+// 最大路径和
 func MinPathSum(grid [][]int) int {
 	m, n := len(grid), len(grid[0])
 	// 使用原数组，减少空间消耗
@@ -151,4 +152,43 @@ func MinPathSum(grid [][]int) int {
 		}
 	}
 	return grid[m-1][n-1]
+}
+
+// 不同路径Ⅱ
+func UniquePathsWithObstacles(obstacleGrid [][]int) int {
+	m, n := len(obstacleGrid), len(obstacleGrid[0])
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			if obstacleGrid[i][j] == 1 {
+				// 障碍格直接跳过
+				continue
+			} else if i == 0 && j == 0 {
+				// 初始格子有一条路径，用负数和障碍进行区分
+				obstacleGrid[i][j] = -1
+			} else if i == 0 {
+				// 上边界，只能从左边过来
+				if obstacleGrid[i][j-1] != 1 {
+					obstacleGrid[i][j] = obstacleGrid[i][j-1]
+				}
+			} else if j == 0 {
+				// 左边界，只能从上来
+				if obstacleGrid[i-1][j] != 1 {
+					obstacleGrid[i][j] = obstacleGrid[i-1][j]
+				}
+			} else {
+				// 当前格子不是障碍物或者边界
+				if obstacleGrid[i-1][j] != 1 {
+					obstacleGrid[i][j] += obstacleGrid[i-1][j]
+				}
+				if obstacleGrid[i][j-1] != 1 {
+					obstacleGrid[i][j] += obstacleGrid[i][j-1]
+				}
+			}
+		}
+	}
+	if obstacleGrid[m-1][n-1] == 1 {
+		return 0
+	}
+	// 前面都是用负数进行累加的，所以要返回负数结果
+	return -obstacleGrid[m-1][n-1]
 }

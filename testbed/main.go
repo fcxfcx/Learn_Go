@@ -5,7 +5,6 @@ import (
 )
 
 func main() {
-	a := "1101"
-	b := "1011"
-	leetcode.AddBinary(a, b)
+	grid := [][]int{{0, 0, 0}, {0, 1, 0}, {0, 0, 0}}
+	leetcode.UniquePathsWithObstacles(grid)
 }
