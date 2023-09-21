@@ -192,3 +192,61 @@ func UniquePathsWithObstacles(obstacleGrid [][]int) int {
 	// 前面都是用负数进行累加的，所以要返回负数结果
 	return -obstacleGrid[m-1][n-1]
 }
+
+// 最长回文子串
+func LongestPalindrome(s string) string {
+	if s == "" {
+		return ""
+	}
+	expand := func(left, right int) (int, int) {
+		for ; left >= 0 && right < len(s) && s[left] == s[right]; left, right = left-1, right+1 {
+		}
+		// 边界条件是最后一个不属于回文子串的索引，所以要去掉
+		return left + 1, right - 1
+	}
+	start, end := 0, 0
+	for i := 0; i < len(s); i++ {
+		// 这里右边界可以超，因为expand方法里有边界判断
+		left1, right1 := expand(i, i)
+		left2, right2 := expand(i, i+1)
+		if right1-left1 > end-start {
+			start, end = left1, right1
+		}
+		if right2-left2 > end-start {
+			start, end = left2, right2
+		}
+	}
+	return s[start : end+1]
+}
+
+// 交错字符串
+func IsInterleave(s1 string, s2 string, s3 string) bool {
+	n1, n2, n3 := len(s1), len(s2), len(s3)
+	if n1+n2 != n3 {
+		return false
+	}
+	// 用滚动数组节省空间
+	dp := make([]bool, n2+1)
+	// 最初始的字符串可以认为是空字符串，所以一定符合
+	dp[0] = true
+	for i := 0; i <= n1; i++ {
+		for j := 0; j <= n2; j++ {
+			// 对应的s3的下标
+			temp := i + j - 1
+			if i > 0 {
+				// 如果由dp[i-1][j]变为dp[i][j]，也就是在s1中多选一个字符
+				// 则符合条件的要求是当前的dp[j]符合，并且新的字符和s3的下一个字符相同
+				// 注意dp的下标对应的是字符串真实下标加一的结果
+				dp[j] = dp[j] && s1[i-1] == s3[temp]
+			}
+			if j > 0 {
+				// 如果由dp[i][j-1]变为dp[i][j]，也就是在s2中多选一个字符
+				// 如果上一步已经符合，则不用再判断，用上一步的结果即可
+				// 否则符合的条件是之前的dp[j-1]符合，并且新字符串与s3的下一个字符相同
+				dp[j] = dp[j] || (dp[j-1] && s2[j-1] == s3[temp])
+			}
+		}
+	}
+	// 注意下标是加过1的
+	return dp[n2]
+}
