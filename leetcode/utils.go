@@ -7,20 +7,24 @@ func reverse(nums []int) {
 	}
 }
 
-func max(a int, b int) int {
-	if a > b {
-		return a
-	} else {
-		return b
+func max(args ...int) int {
+	max := args[0]
+	for _, item := range args {
+		if item > max {
+			max = item
+		}
 	}
+	return max
 }
 
-func min(a int, b int) int {
-	if a < b {
-		return a
-	} else {
-		return b
+func min(args ...int) int {
+	min := args[0]
+	for _, item := range args {
+		if item < min {
+			min = item
+		}
 	}
+	return min
 }
 
 func repeat(num int) string {

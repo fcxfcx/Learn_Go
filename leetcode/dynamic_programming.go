@@ -250,3 +250,37 @@ func IsInterleave(s1 string, s2 string, s3 string) bool {
 	// 注意下标是加过1的
 	return dp[n2]
 }
+
+// 编辑距离
+func MinDistance(word1 string, word2 string) int {
+	// 使用二维动态规划,dp[i][j]代表从word1的前i个字符到word2的前j个字符最少需要的步数
+	m, n := len(word1), len(word2)
+	// 如果有一个是空串
+	if n*m == 0 {
+		return m + n
+	}
+	dp := make([][]int, m+1)
+	for i := range dp {
+		dp[i] = make([]int, n+1)
+	}
+	// 边界条件
+	for i := 0; i < m+1; i++ {
+		dp[i][0] = i
+	}
+	for j := 0; j < n+1; j++ {
+		dp[0][j] = j
+	}
+	for i := 1; i < m+1; i++ {
+		for j := 1; j < n+1; j++ {
+			if word1[i-1] == word2[j-1] {
+				// 当前索引下两个字符串的字母相同
+				dp[i][j] = dp[i-1][j-1]
+			} else {
+				// 从dp[i][j-1], dp[i-1][j]和dp[i-1][j-1]中选最小的一个
+				// 它们分别可以进行一步操作以到达dp[i][j]
+				dp[i][j] = min(dp[i][j-1], dp[i-1][j], dp[i-1][j-1]) + 1
+			}
+		}
+	}
+	return dp[m][n]
+}
