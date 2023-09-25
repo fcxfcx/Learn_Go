@@ -1,6 +1,8 @@
 package leetcode
 
-import "math"
+import (
+	"math"
+)
 
 // 爬楼梯
 func ClimbStairs(n int) int {
@@ -283,4 +285,53 @@ func MinDistance(word1 string, word2 string) int {
 		}
 	}
 	return dp[m][n]
+}
+
+// 买卖股票的最佳时机Ⅲ
+func MaxProfitThree(prices []int) int {
+	// buy1 是当天第一次购入的最大利润，因此第一天购入则利润为负数
+	// sell1 是当天第一次售出的最大利润，如果第一天就售出了则代表当天购买和售出，利润为零
+	// buy2 是当天第二次购入的最大利润，理由同上
+	// sell2 是当天第二次售出的最大利润，理由同上
+	buy1, sell1 := -prices[0], 0
+	buy2, sell2 := -prices[0], 0
+	for i := 1; i < len(prices); i++ {
+		// 对于新的一天的buy1，之前购买过一次可以保持不变，也可以从没有购买过到第一次购买
+		buy1 = max(buy1, -prices[i])
+		// 对于新一天的sell1，如果之前购买过可以售出，也可以保持不变
+		// 这里直接用当天的buy1是因为当天的buy1相当于包括了当天买卖的情况，不影响结果
+		sell1 = max(sell1, buy1+prices[i])
+		// 新一天的buy2同理，注意题目规定卖了之后才能买
+		buy2 = max(buy2, sell1-prices[i])
+		// sell2的计算也直接使用当天的buy2，包括了当天买卖的零利润行为
+		sell2 = max(sell2, buy2+prices[i])
+	}
+	// 结果是0， sell1， sell2中的最大值
+	// 但是由于本身后者就大于等于0，所以省去0的选项
+	// 又因为sell2本身就包括了sell1的当天买卖的选项，所以sell2的结果肯定包括了sell1是最大的情况
+	return sell2
+}
+
+// 买卖股票的最佳时机四
+func MaxProfitFour(k int, prices []int) int {
+	// 两个数组表示当前天，第k次买和第k次卖的最大利润
+	// 创建k+1长度的数组是为了方便下标对应真正的买卖次数
+	buy := make([]int, k+1)
+	sell := make([]int, k+1)
+
+	// 初始化buy数组，就不用额外考虑第一天的初始化，因为循环中会将buy数组置为-price[0]
+	for i := 0; i < k+1; i++ {
+		buy[i] = math.MinInt
+	}
+	for _, price := range prices {
+		// 从k=1开始遍历，因为k等于0的情况利润永远是0，不需要更改
+		for i := 1; i < k+1; i++ {
+			// 当天第k次买的情况有两种，分别是之前就买了k次了，因此当天不做操作，以及当天购入第k次
+			buy[i] = max(buy[i], sell[i-1]-price)
+			// 当天第k次卖的情况也有两种，当天不做操作，或者当天售出第k次
+			// 注意售出第k次的前提是购入了第k次，而不是k-1次
+			sell[i] = max(sell[i], buy[i-1]+price)
+		}
+	}
+	return sell[k]
 }
