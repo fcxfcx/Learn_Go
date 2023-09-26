@@ -1,4 +1,4 @@
-package leetcode
+package top_interview_150
 
 // ----------- 私有工具类方法 --------------
 func reverse(nums []int) {

@@ -1,4 +1,4 @@
-package leetcode
+package top_interview_150
 
 import (
 	"container/heap"

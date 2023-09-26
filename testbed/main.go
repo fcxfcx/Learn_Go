@@ -1,10 +1,10 @@
 package main
 
 import (
-	"leetcode"
+	"top_interview_150"
 )
 
 func main() {
 	grid := [][]int{{0, 0, 0}, {0, 1, 0}, {0, 0, 0}}
-	leetcode.UniquePathsWithObstacles(grid)
+	top_interview_150.UniquePathsWithObstacles(grid)
 }

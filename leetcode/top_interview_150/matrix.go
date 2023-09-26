@@ -1,4 +1,4 @@
-package leetcode
+package top_interview_150
 
 // 有效的数独
 func IsValidSudoku(board [][]byte) bool {

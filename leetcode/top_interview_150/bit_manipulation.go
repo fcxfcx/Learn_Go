@@ -1,4 +1,4 @@
-package leetcode
+package top_interview_150
 
 import "strconv"
 
@@ -94,4 +94,3 @@ func RangeBitwiseAnd(left int, right int) int {
 	}
 	return left << shift
 }
-

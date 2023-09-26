@@ -1,4 +1,4 @@
-package leetcode
+package top_interview_150
 
 import (
 	"math"
@@ -334,4 +334,38 @@ func MaxProfitFour(k int, prices []int) int {
 		}
 	}
 	return sell[k]
+}
+
+// 最大正方形
+func MaximalSquare(matrix [][]byte) int {
+	max := 0
+	m, n := len(matrix), len(matrix[0])
+	// 用dp记录以某一个坐标为正方形右下角时，最大的正方形
+	dp := make([][]int, m)
+	for row := range dp {
+		dp[row] = make([]int, n)
+	}
+	// 初始化
+	for i := 0; i < m; i++ {
+		dp[i] = make([]int, n)
+		for j := 0; j < n; j++ {
+			dp[i][j] = int(matrix[i][j] - '0')
+			if dp[i][j] == 1 {
+				max = 1
+			}
+		}
+	}
+	// 动态规划
+	for i := 1; i < m; i++ {
+		for j := 1; j < n; j++ {
+			if dp[i][j] == 1 {
+				dp[i][j] = min(dp[i-1][j], dp[i-1][j-1], dp[i][j-1]) + 1
+			}
+			if dp[i][j] > max {
+				max = dp[i][j]
+			}
+		}
+	}
+	// 注意返回的是面积不是边长
+	return max * max
 }

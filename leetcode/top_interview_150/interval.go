@@ -1,4 +1,4 @@
-package leetcode
+package top_interview_150
 
 import (
 	"sort"
@@ -99,7 +99,7 @@ func FindMinArrowShots(points [][]int) int {
 			count++
 			maxRight = interval[1]
 			continue
-		} 
+		}
 	}
 	return count
 }

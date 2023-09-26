@@ -2,6 +2,6 @@ module testbed
 
 go 1.20
 
-require leetcode v0.0.0
+require top_interview_150 v0.0.0
 
-replace leetcode => ../leetcode
+replace top_interview_150 => ../leetcode/top_interview_150
