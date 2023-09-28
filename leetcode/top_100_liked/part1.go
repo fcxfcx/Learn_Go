@@ -1,5 +1,7 @@
 package top_100_liked
 
+import "sort"
+
 // 两数之和
 func TwoSum(nums []int, target int) []int {
 	hash := make(map[int]int, 0)
@@ -54,4 +56,74 @@ func LongestConsecutive(nums []int) int {
 		}
 	}
 	return maxLength
+}
+
+// 移动零
+func MoveZeroes(nums []int) {
+	n := len(nums)
+	// a代表当前需要填数字的下标，b代表当前处理的非零值下标
+	a, b := 0, 0
+	for b < n {
+		if nums[b] == 0 {
+			// 零值就跳过
+			b++
+		} else {
+			nums[a] = nums[b]
+			a++
+			b++
+		}
+	}
+	for a < n {
+		nums[a] = 0
+		a++
+	}
+}
+
+// 盛水最多的容器
+func MaxArea(height []int) int {
+	n := len(height)
+	left, right, res := 0, n-1, 0
+	for left < right {
+		area := 0
+		if height[left] < height[right] {
+			area = height[left] * (right - left)
+			left++
+		} else {
+			area = height[right] * (right - left)
+			right--
+		}
+		res = max(res, area)
+	}
+	return res
+}
+
+// 三数之和
+func ThreeSum(nums []int) [][]int {
+	n := len(nums)
+	sort.Ints(nums)
+	res := make([][]int, 0)
+	// 假设三个数字是a,b,c
+	for first := 0; first < n; first++ {
+		if first > 0 && nums[first] == nums[first-1] {
+			// a和上一个相同则跳过
+			continue
+		}
+		second, third := first+1, n-1
+		target := -nums[first]
+		for second < third {
+			if nums[second]+nums[third] < target || (second > first+1 && nums[second] == nums[second-1]) {
+				// b+c < -a则说明b+c不够大，需要挪动b
+				// 或者b和上一个b相同也不可以
+				second++
+			} else if nums[second]+nums[third] > target || (third < n-1 && nums[third] == nums[third+1]) {
+				// 同理如果b+c > -a 则shuom b+c不够小，需要挪动c
+				// 或者c和上一个c相同也不可以
+				third--
+			} else if nums[second]+nums[third] == target {
+				res = append(res, []int{nums[first], nums[second], nums[third]})
+				second++
+			}
+		}
+	}
+	return res
 }
