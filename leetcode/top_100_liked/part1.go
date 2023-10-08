@@ -127,3 +127,79 @@ func ThreeSum(nums []int) [][]int {
 	}
 	return res
 }
+
+// 无重复字符的最长子串
+func LengthOfLongestSubstring(s string) int {
+	n := len(s)
+	if n <= 1 {
+		return n
+	}
+	hash := make(map[byte]bool, 0)
+	start, end, maxLength := 0, 0, 1
+	for end < n {
+		if !hash[byte(s[end])] || start == end {
+			hash[byte(s[end])] = true
+			end++
+			if end-start > maxLength {
+				maxLength = end - start
+			}
+		} else {
+			delete(hash, byte(s[start]))
+			start++
+		}
+	}
+	return maxLength
+}
+
+// 找到字符串中所有字母异位词
+func FindAnagrams(s string, p string) []int {
+	len_s, len_p := len(s), len(p)
+	ans := []int{}
+	if len_p > len_s {
+		// 特判
+		return ans
+	}
+	count := [26]int{}
+	for i, s_byte := range p {
+		// 将p中的字符串记录在哈希表中(用数组存储)
+		count[s_byte-'a'] -= 1
+		count[s[i]-'a'] += 1
+	}
+
+	// 用differ代表当前s的滑动窗口和p的不同字符数量
+	differ := 0
+	for i := 0; i < len(count); i++ {
+		if count[i] != 0 {
+			differ++
+		}
+	}
+	if differ == 0 {
+		// 如果第一个滑动窗口就符合，则将0加入ans
+		ans = append(ans, 0)
+	}
+
+	// 滑动窗口
+	for i, ch := range s[:len_s-len_p] {
+		if count[ch-'a'] == 1 {
+			// 移动后，窗口内字符不同处减一
+			differ--
+		} else if count[ch-'a'] == 0 {
+			// 否则如果这个字符已经符合过了，减掉它会加入一个不同
+			differ++
+		}
+		count[ch-'a']--
+
+		if count[s[i+len_p]-'a'] == -1 {
+			// 窗口尾部移动后的字符为-1代表p中有，所以右边滑动后不同会变少
+			differ--
+		} else if count[s[i+len_p]-'a'] == 0 {
+			differ++
+		}
+		count[s[i+len_p]-'a']++
+
+		if differ == 0 {
+			ans = append(ans, i+1)
+		}
+	}
+	return ans
+}
