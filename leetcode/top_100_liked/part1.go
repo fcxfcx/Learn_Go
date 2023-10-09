@@ -203,3 +203,18 @@ func FindAnagrams(s string, p string) []int {
 	}
 	return ans
 }
+
+// 和为k的子数组
+func SubarraySum(nums []int, k int) int {
+	hash := map[int]int{}
+	hash[0] = 1
+	pre, count := 0, 0
+	for i := 0; i < len(nums); i++ {
+		pre += nums[i]
+		if _, ok := hash[pre-k]; ok {
+			count += hash[pre-k]
+		}
+		hash[pre] += 1
+	}
+	return count
+}
