@@ -1,6 +1,8 @@
 package top_100_liked
 
-import "sort"
+import (
+	"sort"
+)
 
 // 两数之和
 func TwoSum(nums []int, target int) []int {
@@ -128,6 +130,32 @@ func ThreeSum(nums []int) [][]int {
 	return res
 }
 
+// 接雨水
+func Trap(height []int) int {
+	n := len(height)
+	sum, left, right := 0, 0, n-1
+	leftMax, rightMax := height[0], height[n-1]
+	for left < right {
+		if leftMax < rightMax {
+			// 以左边的最大值为准
+			sum += (leftMax - height[left])
+			left++
+			if height[left] > leftMax {
+				// 移动左边指针，维护左侧最大值
+				leftMax = height[left]
+			}
+		} else {
+			// 以右边的最大值为准
+			sum += (rightMax - height[right])
+			right--
+			if height[right] > rightMax {
+				rightMax = height[right]
+			}
+		}
+	}
+	return sum
+}
+
 // 无重复字符的最长子串
 func LengthOfLongestSubstring(s string) int {
 	n := len(s)
@@ -217,4 +245,36 @@ func SubarraySum(nums []int, k int) int {
 		hash[pre] += 1
 	}
 	return count
+}
+
+// 滑动窗口最大值
+func MaxSlidingWindow(nums []int, k int) []int {
+	// 构造单调队列，储存数组下标
+	q := make([]int, 0)
+	push := func(i int) {
+		for len(q) > 0 && q[len(q)-1] < i {
+			// 如果新入队的数大于队尾的数，则队尾可以去除
+			// 因为只要新加入的数还存在，那么队尾的这个数就不可能被选到
+			q = q[:len(q)-1]
+		}
+		q = append(q, i)
+	}
+
+	for i := 0; i < k; i++ {
+		push(i)
+	}
+
+	n := len(nums)
+	ans := make([]int, 1, n-k+1)
+	// 注意队列里存的是数组下标，但是结果要求返回的是数
+	ans[0] = nums[q[0]]
+	for i := k; i < n; i++ {
+		push(i)
+		for q[0] <= i-k {
+			// 队头的元素超过滑动窗口大小的剔除
+			q = q[1:]
+		}
+		ans = append(ans, nums[q[0]])
+	}
+	return ans
 }
