@@ -278,3 +278,59 @@ func MaxSlidingWindow(nums []int, k int) []int {
 	}
 	return ans
 }
+
+// 最小覆盖子串
+func MinWindow(s string, t string) string {
+	len_s, len_t := len(s), len(t)
+	if len_s < len_t {
+		return ""
+	}
+	t_map := make(map[byte]int, 0)
+	// 初始化待匹配字符串对应的哈希表
+	for i := 0; i < len_t; i++ {
+		t_map[byte(t[i])] += 1
+	}
+	// 代表结果子串和已匹配的字符数量
+	result, count := "", 0
+	s_map := make(map[byte]int, 0)
+	for left, right := 0, 0; left <= right && right < len_s; right++ {
+		temp := byte(s[right])
+		// 如果这个字符在t中
+		if num, ok := t_map[temp]; ok {
+			s_map[temp] += 1
+			if s_map[temp] <= num {
+				// 待匹配的字符数量还没有超过t中的数量
+				// 代表新加入的这个字符对匹配有帮助
+				count++
+			}
+		}
+		if count == len_t {
+			// 如果全部匹配成功
+			for left < right {
+				// 右移左边界直至无法匹配
+				if num, ok := s_map[byte(s[left])]; ok {
+					if num == t_map[byte(s[left])] {
+						// 代表当前的字符是不可去的，删去会无法匹配
+						break
+					} else {
+						// 否则就可以右移左边界
+						s_map[byte(s[left])] -= 1
+						left++
+					}
+				} else {
+					// 如果s_map里不含这个字符说明它不是t中的字符
+					left++
+				}
+			}
+			// 维护最小子串
+			if len(result) == 0 || right-left < len(result) {
+				result = s[left : right+1]
+			}
+			// 此时左边第一个一定是已批配字符，右移左边界开始新一次的匹配
+			s_map[s[left]] -= 1
+			left += 1
+			count--
+		}
+	}
+	return result
+}
