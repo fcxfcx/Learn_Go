@@ -1,6 +1,7 @@
 package top_100_liked
 
 import (
+	"math"
 	"sort"
 )
 
@@ -333,4 +334,37 @@ func MinWindow(s string, t string) string {
 		}
 	}
 	return result
+}
+
+// 最大子数组和
+func MaxSubArray(nums []int) int {
+	sum := 0
+	ans := math.MinInt32
+	for i := 0; i < len(nums); i++ {
+		sum = nums[i] + max(sum, 0)
+		ans = max(ans, sum)
+	}
+	return ans
+}
+
+// 合并区间
+func Merge(intervals [][]int) [][]int {
+	// 数组排序
+	sort.Slice(intervals, func(i, j int) bool {
+		return intervals[i][0] < intervals[j][0]
+	})
+	ans := [][]int{}
+	pre := intervals[0]
+	for _, cur := range intervals {
+		if pre[1] < cur[0] {
+			// 没有重叠部分
+			ans = append(ans, pre)
+			pre = cur
+			continue
+		} else if pre[1] < cur[1] {
+			pre[1] = cur[1]
+		}
+	}
+	ans = append(ans, pre)
+	return ans
 }
