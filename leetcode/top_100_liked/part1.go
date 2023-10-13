@@ -368,3 +368,36 @@ func Merge(intervals [][]int) [][]int {
 	ans = append(ans, pre)
 	return ans
 }
+
+// 轮转数组
+func Rotate(nums []int, k int) {
+	reverseArr := func(arr []int) {
+		for i, n := 0, len(arr); i < n/2; i++ {
+			arr[i], arr[n-i-1] = arr[n-i-1], arr[i]
+		}
+	}
+	k %= len(nums)
+	reverseArr(nums)
+	reverseArr(nums[:k])
+	reverseArr(nums[k:])
+}
+
+// 除自身以外数组的乘积
+func ProductExceptSelf(nums []int) []int {
+	n := len(nums)
+	answer := make([]int, n)
+
+	// 首先计算每一个下标处，左边所有数的积
+	answer[0] = 1
+	for i := 1; i < n; i++ {
+		answer[i] = nums[i-1] * answer[i-1]
+	}
+
+	// 从右往左计算每一个下标处，右边所有数的积
+	R := 1
+	for i := n - 1; i >= 0; i++ {
+		answer[i] = answer[i] * R
+		R = R * nums[i]
+	}
+	return answer
+}
