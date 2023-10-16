@@ -401,3 +401,22 @@ func ProductExceptSelf(nums []int) []int {
 	}
 	return answer
 }
+
+// 缺失的第一个正数
+func firstMissingPositive(nums []int) int {
+	// 将数组当成原地的哈希表，在下标i处储存数字i+1
+	n := len(nums)
+	for i := 0; i < n; i++ {
+		for nums[i] > 0 && nums[i] <= n && nums[nums[i]-1] != nums[i] {
+			// 负数的情况，储存数字大于n的情况（最大就是n）和已经储存正确数字的情况可以跳过
+			// 否则就替换当前的数
+			nums[i], nums[nums[i]-1] = nums[nums[i]-1], nums[i]
+		}
+	}
+	for i := 0; i < n; i++ {
+		if nums[i] != i+1 {
+			return i + 1
+		}
+	}
+	return n + 1
+}
