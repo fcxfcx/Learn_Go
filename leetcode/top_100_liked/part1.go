@@ -403,7 +403,7 @@ func ProductExceptSelf(nums []int) []int {
 }
 
 // 缺失的第一个正数
-func firstMissingPositive(nums []int) int {
+func FirstMissingPositive(nums []int) int {
 	// 将数组当成原地的哈希表，在下标i处储存数字i+1
 	n := len(nums)
 	for i := 0; i < n; i++ {
@@ -465,4 +465,39 @@ func SetZeroes(matrix [][]int) {
 			matrix[i][0] = 0
 		}
 	}
+}
+
+// 螺旋矩阵
+func SpiralOrder(matrix [][]int) []int {
+	m, n := len(matrix), len(matrix[0])
+	actions := [][]int{{0, 1}, {1, 0}, {0, -1}, {-1, 0}}
+	actionIndex, row, col := 0, 0, 0
+	result := make([]int, m*n)
+	// 特判，如果行或列等于1
+	if m == 1 {
+		return matrix[0]
+	} else if n == 1 {
+		for i, value := range matrix {
+			result[i] = value[0]
+		}
+		return result
+	}
+	for i := 0; i < len(result); i++ {
+		result[i] = matrix[row][col]
+		// 矩阵中数字是-100至100，用-101标注已填入
+		matrix[row][col] = -101
+		// 遇到其他三个顶角需要拐弯
+		if (row == m-1 && col == 0) || (row == m-1 && col == n-1) || (row == 0 && col == n-1) {
+			actionIndex = (actionIndex + 1) % 4
+		} else {
+			maybeNextRow := row + actions[actionIndex][0]
+			maybeNextCol := col + actions[actionIndex][1]
+			if matrix[maybeNextRow][maybeNextCol] == -101 {
+				actionIndex = (actionIndex + 1) % 4
+			}
+		}
+		row += actions[actionIndex][0]
+		col += actions[actionIndex][1]
+	}
+	return result
 }
