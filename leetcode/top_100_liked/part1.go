@@ -501,3 +501,55 @@ func SpiralOrder(matrix [][]int) []int {
 	}
 	return result
 }
+
+// 旋转矩阵
+func RotateMatrix(matrix [][]int) {
+	n := len(matrix)
+	// 用两次翻转代替旋转
+	// 水平上下翻转
+	for i := 0; i < n/2; i++ {
+		for j := 0; j < n; j++ {
+			matrix[i][j], matrix[n-i-1][j] = matrix[n-i-1][j], matrix[i][j]
+		}
+	}
+	// 主对角线翻转
+	for i := 0; i < n; i++ {
+		for j := 0; j < i; j++ {
+			matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+		}
+	}
+}
+
+// 搜索二维矩阵Ⅱ
+func SearchMatrix(matrix [][]int, target int) bool {
+	m, n := len(matrix), len(matrix[0])
+	up, down := 0, m-1
+	for up < down-1 {
+		// 二分法
+		middle := (down + up) / 2
+		if matrix[middle][0] > target {
+			// 中间的数大于target，左移右边界
+			down = middle
+		} else if matrix[middle][0] == target {
+			return true
+		} else {
+			// 中间的数大于target，则target不可能在这一行
+			up = middle
+		}
+	}
+	for i := up; i >= 0; i-- {
+		// 遍历行，在每一行用二分法搜寻数字
+		left, right := 0, n
+		for left < right {
+			middle := (left + right) / 2
+			if matrix[i][middle] == target {
+				return true
+			} else if matrix[i][middle] > target {
+				right = middle
+			} else {
+				left = middle + 1
+			}
+		}
+	}
+	return false
+}
