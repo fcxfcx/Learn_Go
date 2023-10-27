@@ -579,3 +579,50 @@ func GetIntersectionNode(headA, headB *ListNode) *ListNode {
 	}
 	return pA
 }
+
+// 反转链表
+func ReverseList(head *ListNode) *ListNode {
+	var pre *ListNode
+	cur := head
+	for cur != nil {
+		temp := cur.Next
+		cur.Next = pre
+		pre = cur
+		cur = temp
+	}
+	return pre
+}
+
+// 回文链表
+func IsPalindrome(head *ListNode) bool {
+	if head == nil {
+		return true
+	}
+	// 寻找链表的一半
+	endOfFirstHalf := func(h *ListNode) *ListNode {
+		fast := h
+		slow := h
+		for fast.Next != nil && fast.Next.Next != nil {
+			fast = fast.Next.Next
+			slow = slow.Next
+		}
+		return slow
+	}
+
+	firstHalfEnd := endOfFirstHalf(head)
+	// 第二部分可能比第一部分多一个节点
+	secondHalfStart := ReverseList(firstHalfEnd.Next)
+
+	p1, p2 := head, secondHalfStart
+	result := true
+	for result && p2 != nil {
+		if p1.Val != p2.Val {
+			result = false
+		}
+		p1 = p1.Next
+		p2 = p2.Next
+	}
+
+	firstHalfEnd.Next = ReverseList(secondHalfStart)
+	return result
+}
