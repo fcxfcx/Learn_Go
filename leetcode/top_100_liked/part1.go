@@ -666,3 +666,65 @@ func DetectCycle(head *ListNode) *ListNode {
 	}
 	return nil
 }
+
+// 合并两个有序链表
+func MergeTwoLists(list1 *ListNode, list2 *ListNode) *ListNode {
+	newDummy := &ListNode{}
+	temp := newDummy
+	for list1 != nil && list2 != nil {
+		if list1.Val > list2.Val {
+			temp.Next = list2
+			list2 = list2.Next
+		} else {
+			temp.Next = list1
+			list1 = list1.Next
+		}
+		temp = temp.Next
+	}
+	if list1 == nil {
+		temp.Next = list2
+	} else {
+		temp.Next = list1
+	}
+	return newDummy.Next
+}
+
+// 两数相加
+func AddTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
+	newDummy := &ListNode{}
+	// digit代表进位
+	temp, digit := newDummy, false
+	for l1 != nil || l2 != nil {
+		tempVal := 0
+		if digit {
+			tempVal += 1
+		}
+		if l1 == nil {
+			tempVal += l2.Val
+			l2 = l2.Next
+		} else if l2 == nil {
+			tempVal += l1.Val
+			l1 = l1.Next
+		} else {
+			tempVal += (l1.Val + l2.Val)
+			l1 = l1.Next
+			l2 = l2.Next
+		}
+		if tempVal >= 10 {
+			tempVal -= 10
+			digit = true
+		} else {
+			digit = false
+		}
+		temp.Next = &ListNode{
+			Val: tempVal,
+		}
+		temp = temp.Next
+	}
+	if digit {
+		temp.Next = &ListNode{
+			Val: 1,
+		}
+	}
+	return newDummy.Next
+}
