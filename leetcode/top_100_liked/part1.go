@@ -728,3 +728,50 @@ func AddTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
 	}
 	return newDummy.Next
 }
+
+// 删除链表的倒数第N个节点
+func RemoveNthFromEnd(head *ListNode, n int) *ListNode {
+	if head.Next == nil {
+		return nil
+	}
+	dummyHead := &ListNode{
+		Next: head,
+	}
+	fast, slow := dummyHead, dummyHead
+	for i := 0; i < n; i++ {
+		// 让快指针比慢指针多n个节点
+		fast = fast.Next
+	}
+	for fast.Next != nil {
+		fast = fast.Next
+		slow = slow.Next
+	}
+	slow.Next = slow.Next.Next
+	return dummyHead.Next
+}
+
+// 两两交换链表中的节点
+func SwapPairs(head *ListNode) *ListNode {
+	if head == nil || head.Next == nil {
+		return head
+	}
+	dummyHead := &ListNode{Next: head}
+	pre, cur, next := dummyHead, head, head.Next
+	for cur != nil && next != nil {
+		// 翻转，反转后当前顺序是pre→next→cur
+		pre.Next = next
+		cur.Next = next.Next
+		next.Next = cur
+
+		if cur.Next == nil || cur.Next.Next == nil {
+			// 到末尾
+			break
+		} else {
+			// 下一批
+			pre = cur
+			cur = cur.Next
+			next = cur.Next
+		}
+	}
+	return dummyHead.Next
+}
