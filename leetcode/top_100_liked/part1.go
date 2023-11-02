@@ -775,3 +775,29 @@ func SwapPairs(head *ListNode) *ListNode {
 	}
 	return dummyHead.Next
 }
+
+// K个一组反转链表
+func ReverseKGroup(head *ListNode, k int) *ListNode {
+	dummyHead := &ListNode{Next: head}
+	pre, end := dummyHead, dummyHead
+	for end != nil {
+		// 前移k个数，找到当前组的终点
+		for i := 0; i < k && end != nil; i++ {
+			end = end.Next
+		}
+		if end == nil {
+			// 到结尾则结束翻转过程
+			break
+		}
+		start := pre.Next
+		next := end.Next
+		// 断尾，因为翻转的函数没处理最后一个节点
+		end.Next = nil
+		pre.Next = ReverseList(start)
+		start.Next = next
+		pre = start
+		// 重置下一组的起点
+		end = pre
+	}
+	return dummyHead.Next
+}
