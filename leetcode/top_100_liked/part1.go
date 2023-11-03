@@ -554,12 +554,13 @@ func SearchMatrix(matrix [][]int, target int) bool {
 	return false
 }
 
-// 相交链表
+// 链表数据结构
 type ListNode struct {
 	Val  int
 	Next *ListNode
 }
 
+// 相交链表
 func GetIntersectionNode(headA, headB *ListNode) *ListNode {
 	if headA == nil || headB == nil {
 		return nil
