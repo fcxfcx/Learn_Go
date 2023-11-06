@@ -5,6 +5,11 @@ import (
 )
 
 func main() {
-	matrix := [][]int{{2, 3}}
-	top_100_liked.SpiralOrder(matrix)
+	lc := top_100_liked.Constructor(2)
+	lc.Put(2, 1)
+	lc.Put(2, 2)
+	lc.Get(2)
+	lc.Put(1, 1)
+	lc.Put(4, 1)
+	lc.Get(2)
 }
