@@ -141,3 +141,71 @@ func (lc *LRUCache) Put(key int, value int) {
 		lc.AddToTail(newNode)
 	}
 }
+
+// 二叉树
+type TreeNode struct {
+	Val   int
+	Left  *TreeNode
+	Right *TreeNode
+}
+
+// 二叉树的中序遍历
+func InorderTraversal(root *TreeNode) []int {
+	// 使用非递归的方法，用栈模拟递归
+	if root == nil {
+		return []int{}
+	}
+	result, stack := []int{}, []*TreeNode{}
+	stack = append(stack, root)
+	temp := root.Left
+	for len(stack) != 0 || temp != nil {
+		if temp != nil {
+			stack = append(stack, temp)
+			temp = temp.Left
+		} else {
+			// 如果左侧到底，则弹出栈顶元素
+			top := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+			result = append(result, top.Val)
+			temp = top.Right
+		}
+	}
+	return result
+}
+
+// 二叉树的最大深度
+func MaxDepth(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+	depth := max(MaxDepth(root.Left), MaxDepth(root.Right))
+	return depth + 1
+}
+
+// 翻转二叉树
+func InvertTree(root *TreeNode) *TreeNode {
+	if root == nil {
+		return nil
+	}
+	invertedLeft := InvertTree(root.Left)
+	invertedRight := InvertTree(root.Right)
+	root.Right = invertedLeft
+	root.Left = invertedRight
+	return root
+}
+
+// 对称二叉树
+func IsSymmetric(root *TreeNode) bool {
+	return CheckSymmetric(root, root)
+}
+
+func CheckSymmetric(p, q *TreeNode) bool {
+	// 检查左右两边是否对称
+	if p == nil && q == nil {
+		return true
+	}
+	if p == nil || q == nil {
+		return false
+	}
+	return p.Val == q.Val && CheckSymmetric(p.Left, q.Right) && CheckSymmetric(p.Right, q.Left)
+}
