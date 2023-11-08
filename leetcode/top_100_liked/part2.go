@@ -209,3 +209,52 @@ func CheckSymmetric(p, q *TreeNode) bool {
 	}
 	return p.Val == q.Val && CheckSymmetric(p.Left, q.Right) && CheckSymmetric(p.Right, q.Left)
 }
+
+// 二叉树的直径
+func DiameterOfBinaryTree(root *TreeNode) int {
+	result := 0
+	var maxPathNode func(root *TreeNode) int
+	maxPathNode = func(root *TreeNode) int {
+		if root == nil {
+			return -1
+		}
+		leftMax := maxPathNode(root.Left)
+		rightMax := maxPathNode(root.Right)
+		if result < leftMax+rightMax+1 {
+			result = leftMax + rightMax + 1
+		}
+		if leftMax > rightMax {
+			return leftMax + 1
+		} else {
+			return rightMax + 1
+		}
+	}
+	maxPathNode(root)
+	return result
+}
+
+// 二叉树层序遍历
+func LevelOrder(root *TreeNode) (res [][]int) {
+	if root == nil {
+		return
+	}
+	curLevel, nextLevel := []*TreeNode{}, []*TreeNode{}
+	curLevel = append(curLevel, root)
+	for len(curLevel) != 0 {
+		temp := []int{}
+		for len(curLevel) != 0 {
+			temp = append(temp, curLevel[0].Val)
+			if curLevel[0].Left != nil {
+				nextLevel = append(nextLevel, curLevel[0].Left)
+			}
+			if curLevel[0].Right != nil {
+				nextLevel = append(nextLevel, curLevel[0].Right)
+			}
+			curLevel = curLevel[1:]
+		}
+		res = append(res, temp)
+		curLevel = nextLevel
+		nextLevel = []*TreeNode{}
+	}
+	return
+}
