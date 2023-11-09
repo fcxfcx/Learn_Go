@@ -1,5 +1,7 @@
 package top_100_liked
 
+import "math"
+
 func SortList(head *ListNode) *ListNode {
 	return SortOne(head, nil)
 }
@@ -257,4 +259,22 @@ func LevelOrder(root *TreeNode) (res [][]int) {
 		nextLevel = []*TreeNode{}
 	}
 	return
+}
+
+// 验证二叉搜索树
+func IsValidBST(root *TreeNode) bool {
+	var check func(root *TreeNode, max int, min int) bool
+	check = func(root *TreeNode, max int, min int) bool {
+		if root == nil {
+			return true
+		}
+		if root.Val <= max && root.Val >= min {
+			if !check(root.Left, root.Val-1, min) || !check(root.Right, max, root.Val+1) {
+				return false
+			}
+			return true
+		}
+		return false
+	}
+	return check(root, math.MaxInt64, math.MinInt64)
 }
