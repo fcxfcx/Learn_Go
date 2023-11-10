@@ -278,3 +278,53 @@ func IsValidBST(root *TreeNode) bool {
 	}
 	return check(root, math.MaxInt64, math.MinInt64)
 }
+
+// 二叉搜索树中第k小的元素
+func KthSmallest(root *TreeNode, k int) int {
+	order := InorderTraversal(root)
+	return order[k-1]
+}
+
+// 二叉树的右视图
+func RightSideView(root *TreeNode) (res []int) {
+	if root == nil {
+		return
+	}
+	queue := []*TreeNode{}
+	queue = append(queue, root)
+	// 层序遍历
+	for len(queue) != 0 {
+		// 当前层
+		n := len(queue)
+		temp := &TreeNode{}
+		for i := 0; i < n; i++ {
+			temp = queue[i]
+			if temp.Left != nil {
+				queue = append(queue, temp.Left)
+			}
+			if temp.Right != nil {
+				queue = append(queue, temp.Right)
+			}
+		}
+		queue = queue[n:]
+		res = append(res, temp.Val)
+	}
+	return
+}
+
+// 二叉树展开为链表
+func Flatten(root *TreeNode) {
+	cur := root
+	for cur != nil {
+		if cur.Left != nil {
+			next := cur.Left
+			findRight := next
+			for findRight.Right != nil {
+				findRight = findRight.Right
+			}
+			findRight.Right = cur.Right
+			cur.Left, cur.Right = nil, next
+		}
+		cur = cur.Right
+	}
+}
