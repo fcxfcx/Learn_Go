@@ -328,3 +328,56 @@ func Flatten(root *TreeNode) {
 		cur = cur.Right
 	}
 }
+
+// 从前序与中序遍历序列构造二叉树
+func BuildTree(preorder []int, inorder []int) *TreeNode {
+	if len(preorder) == 0 {
+		return nil
+	} else if len(preorder) == 1 && len(inorder) == 1 {
+		return &TreeNode{
+			Val: preorder[0],
+		}
+	}
+	rootVal := preorder[0]
+	left := 0
+	for i := 0; i < len(inorder); i++ {
+		if inorder[i] == rootVal {
+			left = i
+			break
+		}
+	}
+	leftNode := BuildTree(preorder[1:left+1], inorder[:left])
+	rightNode := BuildTree(preorder[left+1:], inorder[left+1:])
+	root := &TreeNode{
+		Val:   rootVal,
+		Left:  leftNode,
+		Right: rightNode,
+	}
+	return root
+}
+
+// 路径总和Ⅲ
+func PathSum(root *TreeNode, targetSum int) int {
+	total := 0
+	if root == nil {
+		return total
+	}
+	hash := map[int]int{}
+	hash[0] = 1
+	var findPrefix func(node *TreeNode, prefix int)
+	findPrefix = func(node *TreeNode, prefix int) {
+		if val, ok := hash[prefix-targetSum]; ok {
+			total += val
+		}
+		hash[prefix]++
+		if node.Left != nil {
+			findPrefix(node.Left, prefix+node.Left.Val)
+		}
+		if node.Right != nil {
+			findPrefix(node.Right, prefix+node.Right.Val)
+		}
+		hash[prefix]--
+	}
+	findPrefix(root, root.Val)
+	return total
+}
