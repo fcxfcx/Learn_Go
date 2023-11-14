@@ -381,3 +381,43 @@ func PathSum(root *TreeNode, targetSum int) int {
 	findPrefix(root, root.Val)
 	return total
 }
+
+// 二叉树的最近公共祖先
+func LowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
+	if root == nil {
+		return nil
+	}
+	if root == p || root == q {
+		return root
+	}
+	left := LowestCommonAncestor(root.Left, p, q)
+	right := LowestCommonAncestor(root.Right, p, q)
+	if left != nil && right != nil {
+		return root
+	}
+	if left != nil {
+		return left
+	}
+	return right
+}
+
+// 二叉树最大路径和
+func maxPathSum(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+	maxPath := math.MinInt64
+	var maxPathOfNode func(node *TreeNode) int
+	maxPathOfNode = func(node *TreeNode) int {
+		if node == nil {
+			return 0
+		}
+		leftMax := maxPathOfNode(node.Left)
+		rightMax := maxPathOfNode(node.Right)
+		maxPath = max(maxPath, leftMax+rightMax+node.Val)
+		outputMax := max(leftMax, rightMax) + node.Val
+		return max(outputMax, 0)
+	}
+	maxPathOfNode(root)
+	return maxPath
+}
