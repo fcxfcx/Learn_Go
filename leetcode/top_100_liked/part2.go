@@ -402,7 +402,7 @@ func LowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
 }
 
 // 二叉树最大路径和
-func maxPathSum(root *TreeNode) int {
+func MaxPathSum(root *TreeNode) int {
 	if root == nil {
 		return 0
 	}

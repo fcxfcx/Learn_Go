@@ -5,11 +5,6 @@ import (
 )
 
 func main() {
-	lc := top_100_liked.Constructor(2)
-	lc.Put(2, 1)
-	lc.Put(2, 2)
-	lc.Get(2)
-	lc.Put(1, 1)
-	lc.Put(4, 1)
-	lc.Get(2)
+	grid := [][]int{{2, 1, 1}, {1, 1, 0}, {0, 1, 1}}
+	top_100_liked.OrangesRotting(grid)
 }
