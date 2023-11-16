@@ -69,3 +69,69 @@ func OrangesRotting(grid [][]int) int {
 		return round
 	}
 }
+
+// 课程表
+func CanFinish(numCourses int, prerequisites [][]int) bool {
+	afterMap := map[int][]int{}         // 储存某一课程的后继课程
+	indgrees := make([]int, numCourses) // 记录每个课程所需的前置课程数量
+	learned := 0
+	for _, v := range prerequisites {
+		// 课程v[0] 需要先修课程 v[1]
+		afterMap[v[1]] = append(afterMap[v[1]], v[0])
+		indgrees[v[0]]++
+	}
+	q := []int{} // 当前可以修的课程
+	for i := 0; i < numCourses; i++ {
+		// 无需修前置课程的课程先入队
+		if indgrees[i] == 0 {
+			q = append(q, i)
+		}
+	}
+	for len(q) > 0 {
+		temp := q[0]
+		q = q[1:]
+		learned++
+		for _, v := range afterMap[temp] {
+			// temp对应的后继课程所需前置课程数量减1
+			indgrees[v]--
+			if indgrees[v] == 0 {
+				q = append(q, v)
+			}
+		}
+	}
+	return learned == numCourses
+}
+
+// 全排列
+func Permute(nums []int) (ans [][]int) {
+	if len(nums) == 0 {
+		return ans
+	}
+	hashset := map[int]bool{}
+	for i := 0; i < len(nums); i++ {
+		hashset[nums[i]] = true
+	}
+
+	path := []int{}
+	var dfs func(length int)
+	dfs = func(length int) {
+		if length == 0 {
+			temp := make([]int, len(path))
+			copy(temp, path)
+			ans = append(ans, temp)
+			return
+		}
+		for num := range hashset {
+			if !hashset[num] {
+				continue
+			}
+			path = append(path, num)
+			hashset[num] = false
+			dfs(length - 1)
+			hashset[num] = true
+			path = path[:len(path)-1]
+		}
+	}
+	dfs(len(nums))
+	return ans
+}
