@@ -5,6 +5,6 @@ import (
 )
 
 func main() {
-	grid := [][]int{{2, 1, 1}, {1, 1, 0}, {0, 1, 1}}
-	top_100_liked.OrangesRotting(grid)
+	nums := []int{1, 2, 3}
+	top_100_liked.Subsets(nums)
 }

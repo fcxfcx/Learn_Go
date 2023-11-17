@@ -135,3 +135,25 @@ func Permute(nums []int) (ans [][]int) {
 	dfs(len(nums))
 	return ans
 }
+
+// 子集
+func Subsets(nums []int) (ans [][]int) {
+	set := []int{}
+
+	// 对于指定长度的子集，某一处的数字只有两种情况即是选取或不选取
+	var dfs func(cur int)
+	dfs = func(cur int) {
+		if cur == len(nums) {
+			ans = append(ans, append([]int{}, set...))
+			return
+		}
+		// 选取当前数字
+		set = append(set, nums[cur])
+		dfs(cur + 1)
+		// 不选取当前数字
+		set = set[:len(set)-1]
+		dfs(cur + 1)
+	}
+	dfs(0)
+	return ans
+}
