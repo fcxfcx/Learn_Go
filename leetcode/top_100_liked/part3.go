@@ -1,5 +1,7 @@
 package top_100_liked
 
+import "sort"
+
 // 岛屿数量
 func NumIslands(grid [][]byte) int {
 	count := 0
@@ -156,4 +158,57 @@ func Subsets(nums []int) (ans [][]int) {
 	}
 	dfs(0)
 	return ans
+}
+
+// 电话号码
+func LetterCombinations(digits string) (ans []string) {
+	words := []string{"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"}
+
+	length := len(digits)
+	if length == 0 {
+		return
+	}
+	path := ""
+	var dfs func(index int)
+	dfs = func(index int) {
+		if index == length {
+			ans = append(ans, path)
+			return
+		}
+		for _, v := range words[digits[index]-'2'] {
+			path += string(v)
+			dfs(index + 1)
+			path = path[:len(path)-1]
+		}
+	}
+	dfs(0)
+	return
+}
+
+// 组合总和
+func CombinationSum(candidates []int, target int) (ans [][]int) {
+	path := []int{}
+	// 升序排序数组
+	sort.Ints(candidates)
+	var dfs func(start int)
+	dfs = func(start int) {
+		if target < 0 {
+			return
+		}
+		if target == 0 {
+			temp := make([]int, len(path))
+			copy(temp, path)
+			ans = append(ans, temp)
+			return
+		}
+		for i := start; i < len(candidates); i++ {
+			path = append(path, candidates[i])
+			target -= candidates[i]
+			dfs(i)
+			target += candidates[i]
+			path = path[:len(path)-1]
+		}
+	}
+	dfs(0)
+	return
 }

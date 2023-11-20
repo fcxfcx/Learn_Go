@@ -5,6 +5,6 @@ import (
 )
 
 func main() {
-	nums := []int{1, 2, 3}
-	top_100_liked.Subsets(nums)
+	coordinates := []int{2, 3, 6, 7}
+	top_100_liked.CombinationSum(coordinates, 7)
 }
