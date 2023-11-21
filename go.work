@@ -5,4 +5,5 @@ use (
 	./leetcode/top_interview_150
 	./testbed
 	./gee_project
+	./leetcode_master
 )
