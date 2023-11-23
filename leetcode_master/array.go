@@ -32,3 +32,24 @@ func RemoveElement(nums []int, val int) int {
 	}
 	return left + 1
 }
+
+// No. 59 螺旋矩阵Ⅱ
+func GenerateMatrix(n int) [][]int {
+	result := make([][]int, 0)
+	for i := 0; i < n; i++ {
+		temp := make([]int, n)
+		result = append(result, temp)
+	}
+	directions := [][]int{{0, 1}, {1, 0}, {0, -1}, {-1, 0}}
+	dirIndex := 0
+	row, col := 0, 0
+	for i := 1; i <= n*n; i++ {
+		result[row][col] = i
+		maybeNextRow, maybeNextCol := (row + directions[dirIndex][0]), (col + directions[dirIndex][1])
+		if maybeNextRow < 0 || maybeNextRow == n || maybeNextCol < 0 || maybeNextCol == n || result[maybeNextRow][maybeNextCol] != 0 {
+			dirIndex = (dirIndex + 1) % 4
+		}
+		row, col = (row + directions[dirIndex][0]), (col + directions[dirIndex][1])
+	}
+	return result
+}
