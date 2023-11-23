@@ -1,5 +1,7 @@
 package leetcode_master
 
+import "math"
+
 // No.704 二分查找
 func Search(nums []int, target int) int {
 	n := len(nums)
@@ -31,6 +33,57 @@ func RemoveElement(nums []int, val int) int {
 		}
 	}
 	return left + 1
+}
+
+// No.977 有序数组的平方
+func SortedSquares(nums []int) []int {
+	n := len(nums)
+	result := make([]int, n)
+	left, right, cur := 0, n-1, n-1
+	for left <= right {
+		num_left, num_right := nums[left], nums[right]
+		if num_left < 0 {
+			num_left = -num_left
+		}
+		if num_right < 0 {
+			num_right = -num_right
+		}
+		if num_left < num_right {
+			result[cur] = num_right * num_right
+			right--
+		} else {
+			result[cur] = num_left * num_left
+			left++
+		}
+		cur--
+	}
+	return result
+}
+
+// No.209 长度最小的子数组
+func MinSubArrayLen(target int, nums []int) int {
+	left, right := 0, 0
+	n := len(nums)
+	minLen, curSum := math.MaxInt64, nums[0]
+	for left <= right {
+		if curSum < target {
+			if right == n-1 {
+				break
+			} else {
+				right++
+				curSum += nums[right]
+			}
+		} else {
+			minLen = min(minLen, (right - left + 1))
+			curSum -= nums[left]
+			left++
+		}
+	}
+	if minLen == math.MaxInt64 {
+		return 0
+	} else {
+		return minLen
+	}
 }
 
 // No. 59 螺旋矩阵Ⅱ
