@@ -99,18 +99,62 @@ func (list *MyLinkedList) DeleteAtIndex(index int) {
 
 // No.206 反转链表
 func ReverseList(head *ListNode) *ListNode {
-	stack := []*ListNode{}
-	for head != nil {
-		stack = append(stack, head)
-		head = head.Next
+	var pre *ListNode
+	cur := head
+	for cur != nil {
+		next := cur.Next
+		cur.Next = pre
+		pre = cur
+		cur = next
 	}
-	dummy := &ListNode{}
-	cur := dummy
-	for len(stack) != 0 {
-		temp := stack[len(stack)-1]
-		cur.Next = temp
-		cur = cur.Next
-		stack = stack[:len(stack)-1]
+	return pre
+}
+
+// No.24 两两交换链表中的节点
+func SwapPairs(head *ListNode) *ListNode {
+	if head == nil || head.Next == nil {
+		return head
 	}
+	node1, node2, node3 := head, head.Next, head.Next.Next
+	node2.Next = node1
+	node1.Next = SwapPairs(node3)
+	return node2
+}
+
+// No.19 删除链表的倒数第N个节点
+func RemoveNthFromEnd(head *ListNode, n int) *ListNode {
+	dummy := &ListNode{
+		Next: head,
+	}
+	fast, slow := dummy, dummy
+	for i := 0; i < n; i++ {
+		fast = fast.Next
+	}
+	for fast.Next != nil {
+		slow = slow.Next
+		fast = fast.Next
+	}
+	slow.Next = slow.Next.Next
 	return dummy.Next
+}
+
+// 面试题 02.07. 链表相交
+func GetIntersectionNode(headA, headB *ListNode) *ListNode {
+	if headA == nil || headB == nil {
+		return nil
+	}
+	pA, pB := headA, headB
+	for pA != pB {
+		if pA == nil {
+			pA = headB
+		} else {
+			pA = pA.Next
+		}
+		if pB == nil {
+			pB = headA
+		} else {
+			pB = pB.Next
+		}
+	}
+	return pA
 }
