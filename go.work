@@ -1,9 +1,18 @@
 go 1.20
 
 use (
+	// Gee Project
+	./gee_project
+	./learn_go_with_test/array_and_slice
+
+	// Learn Go With Test
+	./learn_go_with_test/hello
+	./learn_go_with_test/integer
+	./learn_go_with_test/iteration
+
+	// Leetcode
 	./leetcode/top_100_liked
 	./leetcode/top_interview_150
-	./testbed
-	./gee_project
 	./leetcode_master
+	./testbed
 )
