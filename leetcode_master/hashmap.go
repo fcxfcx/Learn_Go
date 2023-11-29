@@ -1,5 +1,9 @@
 package leetcode_master
 
+import (
+	"sort"
+)
+
 // No.242 有效的字母异位词
 func IsAnagram(s string, t string) bool {
 	dic := [26]int{}
@@ -87,4 +91,62 @@ func FourSumCount(nums1 []int, nums2 []int, nums3 []int, nums4 []int) int {
 		}
 	}
 	return count
+}
+
+// No.383 赎金信
+func CanConstruct(ransomNote string, magazine string) bool {
+	hash := [26]int{}
+	for _, b := range []byte(magazine) {
+		hash[b-'a'] += 1
+	}
+	for _, v := range []byte(ransomNote) {
+		if hash[v-'a'] > 0 {
+			hash[v-'a'] -= 1
+		} else {
+			return false
+		}
+	}
+	return true
+}
+
+// No.15 三数之和
+func ThreeSum(nums []int) [][]int {
+	ans := make([][]int, 0)
+	// 升序排序
+	sort.Ints(nums)
+	n := len(nums)
+	// 寻找a + b + c = 0
+	// 假设a = nums[i], b = nums[left], c = nums[right]
+	for i := 0; i < n-2; i++ {
+		// 至少要留三个数，因此i需要小于n-2
+		// a 的去重
+		if i > 0 && nums[i] == nums[i-1] {
+			continue
+		}
+		a := nums[i]
+		if a > 0 {
+			// 第一个数大于0则之后都不会有相加等于0的三个结果
+			break
+		}
+		left, right := i+1, n-1
+		for left < right {
+			b, c := nums[left], nums[right]
+			if a+b+c == 0 {
+				ans = append(ans, []int{a, b, c})
+				// b的去重
+				for left < right && nums[left] == b {
+					left++
+				}
+				// c的去重
+				for left < right && nums[right] == c {
+					right--
+				}
+			} else if a+b+c > 0 {
+				right--
+			} else {
+				left++
+			}
+		}
+	}
+	return ans
 }

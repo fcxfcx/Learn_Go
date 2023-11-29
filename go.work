@@ -3,12 +3,12 @@ go 1.20
 use (
 	// Gee Project
 	./gee_project
-	./learn_go_with_test/array_and_slice
 
 	// Learn Go With Test
 	./learn_go_with_test/hello
 	./learn_go_with_test/integer
 	./learn_go_with_test/iteration
+	./learn_go_with_test/array_and_slice
 
 	// Leetcode
 	./leetcode/top_100_liked
