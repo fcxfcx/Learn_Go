@@ -150,3 +150,43 @@ func ThreeSum(nums []int) [][]int {
 	}
 	return ans
 }
+
+// No.18 四数之和
+func FourSum(nums []int, target int) [][]int {
+	ans := [][]int{}
+	sort.Ints(nums)
+	n := len(nums)
+	for i := 0; i < n-3; i++ {
+		// 同样需要去重
+		if i > 0 && nums[i] == nums[i-1] {
+			continue
+		}
+		a := nums[i]
+		for j := i + 1; j < n-2; j++ {
+			if j > 1 && nums[j] == nums[j-1] {
+				continue
+			}
+			b := nums[j]
+			left, right := j+1, n-1
+			for left < right {
+				c, d := nums[left], nums[right]
+				if a+b+c+d == target {
+					ans = append(ans, []int{a, b, c, d})
+					// b的去重
+					for left < right && nums[left] == c {
+						left++
+					}
+					// c的去重
+					for left < right && nums[right] == d {
+						right--
+					}
+				} else if a+b+c+d < target {
+					left++
+				} else {
+					right--
+				}
+			}
+		}
+	}
+	return ans
+}

@@ -9,6 +9,7 @@ use (
 	./learn_go_with_test/integer
 	./learn_go_with_test/iteration
 	./learn_go_with_test/array_and_slice
+	./learn_go_with_test/struct_and_interface
 
 	// Leetcode
 	./leetcode/top_100_liked
