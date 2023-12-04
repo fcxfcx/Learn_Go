@@ -12,6 +12,7 @@ use (
 	./learn_go_with_test/struct_and_interface
 	./learn_go_with_test/channel_and_select
 	./learn_go_with_test/pointer_and_error
+	./learn_go_with_test/maps
 
 	// Leetcode
 	./leetcode/top_100_liked
