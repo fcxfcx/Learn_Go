@@ -4,15 +4,19 @@ use (
 	// Gee Project
 	./gee_project
 
+
 	// Learn Go With Test
 	./learn_go_with_test/hello
 	./learn_go_with_test/integer
 	./learn_go_with_test/iteration
-	./learn_go_with_test/array_and_slice
-	./learn_go_with_test/struct_and_interface
-	./learn_go_with_test/channel_and_select
-	./learn_go_with_test/pointer_and_error
 	./learn_go_with_test/maps
+	./learn_go_with_test/pointer_and_error
+	./learn_go_with_test/struct_and_interface
+	./learn_go_with_test/array_and_slice
+	./learn_go_with_test/channel_and_select
+	./learn_go_with_test/dependency_injection
+	./learn_go_with_test/mocking
+	./learn_go_with_test/concurrency
 
 	// Leetcode
 	./leetcode/top_100_liked

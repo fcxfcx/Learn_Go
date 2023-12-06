@@ -65,3 +65,53 @@ func ReverseWords(s string) string {
 	}
 	return string(str)
 }
+
+// No.28 找出字符串中第一个匹配项的下标
+func StrStr(haystack string, needle string) int {
+	m, n := len(haystack), len(needle)
+	if m < n {
+		return -1
+	}
+	next := make([]int, n)
+	makeNext(next, needle)
+
+	j := 0
+	for i := 0; i < m; i++ {
+		for j > 0 && haystack[i] != needle[j] {
+			j = next[j-1]
+		}
+		if haystack[i] == needle[j] {
+			j++
+		}
+		if j == n {
+			return i - n + 1
+		}
+	}
+	return -1
+}
+
+func makeNext(next []int, s string) {
+	// KMP算法构造next数组
+	j := 0
+	next[0] = j
+	for i := 1; i < len(s); i++ {
+		for j > 0 && s[i] != s[j] {
+			j = next[j-1]
+		}
+		if s[i] == s[j] {
+			j++
+		}
+		next[i] = j
+	}
+}
+
+// No.459 重复的子字符串
+func RepeatedSubstringPattern(s string) bool {
+	n := len(s)
+	next := make([]int, n)
+	makeNext(next, s)
+	if next[n-1] != 0 && n%(n-next[n-1]) == 0 {
+		return true
+	}
+	return false
+}
