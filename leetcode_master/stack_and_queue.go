@@ -1,5 +1,9 @@
 package leetcode_master
 
+import (
+	"strconv"
+)
+
 // No.232 使用栈实现队列
 type MyQueue struct {
 	inStack  []int
@@ -79,4 +83,68 @@ func (s *MyStack) Top() int {
 
 func (s *MyStack) Empty() bool {
 	return len(s.Queue) == 0
+}
+
+// No.20 有效的括号
+func IsValid(s string) bool {
+	stack := []byte{}
+	str := []byte(s)
+	for i := 0; i < len(str); i++ {
+		if str[i] == '(' {
+			stack = append(stack, ')')
+		} else if str[i] == '[' {
+			stack = append(stack, ']')
+		} else if str[i] == '{' {
+			stack = append(stack, '}')
+		} else if len(stack) == 0 || stack[len(stack)-1] != str[i] {
+			return false
+		} else {
+			stack = stack[:len(stack)-1]
+		}
+	}
+	return len(stack) == 0
+}
+
+// No.1047 删除字符串中的所有相邻重复项
+func RemoveDuplicates(s string) string {
+	stack := []byte{}
+	str := []byte(s)
+	for i := 0; i < len(str); i++ {
+		if len(stack) == 0 {
+			stack = append(stack, str[i])
+			continue
+		}
+		top := stack[len(stack)-1]
+		if str[i] == top {
+			stack = stack[:len(stack)-1]
+		} else {
+			stack = append(stack, str[i])
+		}
+	}
+	return string(stack)
+}
+
+// No.150 逆波兰表达式求值
+func EvalRPN(tokens []string) int {
+	stack := []int{}
+	for _, token := range tokens {
+		num, err := strconv.Atoi(token)
+		if err == nil {
+			stack = append(stack, num)
+		} else {
+			num1 := stack[len(stack)-1]
+			num2 := stack[len(stack)-2]
+			stack = stack[:len(stack)-2]
+			if token == "+" {
+				stack = append(stack, num1+num2)
+			} else if token == "-" {
+				stack = append(stack, num1-num2)
+			} else if token == "*" {
+				stack = append(stack, num1*num2)
+			} else {
+				stack = append(stack, num1/num2)
+			}
+		}
+	}
+	return stack[0]
 }
