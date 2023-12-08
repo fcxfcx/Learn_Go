@@ -148,3 +148,26 @@ func EvalRPN(tokens []string) int {
 	}
 	return stack[0]
 }
+
+// No. 239.滑动窗口最大值
+func MaxSlidingWindow(nums []int, k int) []int {
+	q := []int{}
+	res := []int{}
+	push := func(x int) {
+		for len(q) != 0 && nums[q[len(q)-1]] < nums[x] {
+			q = q[:len(q)-1]
+		}
+		q = append(q, x)
+	}
+	for i := 0; i < k; i++ {
+		push(i)
+	}
+	for i := k - 1; i < len(nums); i++ {
+		res = append(res, nums[q[0]])
+		if q[0] == i-k+1 {
+			q = q[1:]
+		}
+		push(i + 1)
+	}
+	return res
+}

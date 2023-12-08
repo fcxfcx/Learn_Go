@@ -5,14 +5,6 @@ import (
 )
 
 func main() {
-	head := &leetcode_master.ListNode{
-		Val: 1,
-	}
-	head.Next = &leetcode_master.ListNode{
-		Val: 2,
-	}
-	head.Next.Next = &leetcode_master.ListNode{
-		Val: 3,
-	}
-	leetcode_master.ReverseList(head)
+	nums := []int{1, 3, -1, -3, 5, 3, 6, 7}
+	leetcode_master.MaxSlidingWindow(nums, 3)
 }
