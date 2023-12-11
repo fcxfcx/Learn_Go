@@ -1,6 +1,7 @@
 package leetcode_master
 
 import (
+	"container/heap"
 	"strconv"
 )
 
@@ -154,20 +155,56 @@ func MaxSlidingWindow(nums []int, k int) []int {
 	q := []int{}
 	res := []int{}
 	push := func(x int) {
-		for len(q) != 0 && nums[q[len(q)-1]] < nums[x] {
+		for len(q) != 0 && q[len(q)-1] < x {
 			q = q[:len(q)-1]
 		}
 		q = append(q, x)
 	}
 	for i := 0; i < k; i++ {
-		push(i)
+		push(nums[i])
 	}
-	for i := k - 1; i < len(nums); i++ {
-		res = append(res, nums[q[0]])
-		if q[0] == i-k+1 {
+	res = append(res, q[0])
+	for i := k; i < len(nums); i++ {
+		if q[0] == nums[i-k] {
 			q = q[1:]
 		}
-		push(i + 1)
+		push(nums[i])
+		res = append(res, q[0])
 	}
+	return res
+}
+
+// No.347 前K个高频元素
+func TopKFrequent(nums []int, k int) []int {
+	dic := map[int]int{}
+	for i := 0; i < len(nums); i++ {
+		dic[nums[i]]++
+	}
+	h := &MinHeap{}
+	heap.Init(h)
+	for key, value := range dic {
+		heap.Push(h, [2]int{key, value})
+		if h.Len() > k {
+			heap.Pop(h)
+		}
+	}
+	res := make([]int, k)
+	for i := 0; i < k; i++ {
+		res[k-i-1] = heap.Pop(h).([2]int)[0]
+	}
+	return res
+}
+
+// 使用heap.Interface实现最小堆
+type MinHeap [][2]int
+
+func (h MinHeap) Len() int               { return len(h) }
+func (h MinHeap) Swap(i, j int)          { h[i], h[j] = h[j], h[i] }
+func (h MinHeap) Less(i, j int) bool     { return h[i][1] < h[j][1] }
+func (h *MinHeap) Push(pair interface{}) { *h = append(*h, pair.([2]int)) }
+func (h *MinHeap) Pop() interface{} {
+	n := len(*h)
+	res := (*h)[n-1]
+	*h = (*h)[:n-1]
 	return res
 }

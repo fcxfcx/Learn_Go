@@ -5,6 +5,6 @@ import (
 )
 
 func main() {
-	nums := []int{1, 3, -1, -3, 5, 3, 6, 7}
-	leetcode_master.MaxSlidingWindow(nums, 3)
+	nums := []int{1, 1, 1, 2, 2, 3}
+	leetcode_master.TopKFrequent(nums, 2)
 }
