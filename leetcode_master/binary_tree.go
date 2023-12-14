@@ -119,3 +119,43 @@ func checkSymmetric(left *TreeNode, right *TreeNode) bool {
 	}
 	return checkSymmetric(left.Left, right.Right) && checkSymmetric(left.Right, right.Left)
 }
+
+// No.222 完全二叉树的节点个数
+func CountNodes(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+	leftDepth, rightDepth := 0, 0
+	left, right := root.Left, root.Right
+	for left != nil {
+		left = left.Left
+		leftDepth++
+	}
+	for right != nil {
+		right = right.Right
+		rightDepth++
+	}
+	if leftDepth == rightDepth {
+		return (2 << leftDepth) - 1
+	}
+	return CountNodes(left) + CountNodes(right) + 1
+}
+
+// No.110 平衡二叉树
+func isBalanced(root *TreeNode) bool {
+	return nodeDepth(root) != -1
+}
+
+func nodeDepth(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+	leftDepth, rightDepth := nodeDepth(root.Left), nodeDepth(root.Right)
+	if leftDepth == -1 || rightDepth == -1 {
+		return -1
+	}
+	if leftDepth-rightDepth > 1 || rightDepth-leftDepth > 1 {
+		return -1
+	}
+	return max(leftDepth, rightDepth) + 1
+}
