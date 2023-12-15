@@ -1,5 +1,7 @@
 package leetcode_master
 
+import "strconv"
+
 type TreeNode struct {
 	Val   int
 	Left  *TreeNode
@@ -142,7 +144,7 @@ func CountNodes(root *TreeNode) int {
 }
 
 // No.110 平衡二叉树
-func isBalanced(root *TreeNode) bool {
+func IsBalanced(root *TreeNode) bool {
 	return nodeDepth(root) != -1
 }
 
@@ -158,4 +160,63 @@ func nodeDepth(root *TreeNode) int {
 		return -1
 	}
 	return max(leftDepth, rightDepth) + 1
+}
+
+// No.257 二叉树的所有路径
+func BinaryTreePaths(root *TreeNode) []string {
+	res := []string{}
+	var travel func(node *TreeNode, temp string)
+	travel = func(node *TreeNode, temp string) {
+		if node.Left == nil && node.Right == nil {
+			s := temp + strconv.Itoa(node.Val)
+			res = append(res, s)
+			return
+		}
+		temp = temp + strconv.Itoa(node.Val) + "->"
+		if node.Left != nil {
+			travel(node.Left, temp)
+		}
+		if root.Right != nil {
+			travel(node.Right, temp)
+		}
+	}
+	travel(root, "")
+	return res
+}
+
+// No.404 左叶子之和
+func SumOfLeftLeaves(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+	leftVal := SumOfLeftLeaves(root.Left)
+	if root.Left != nil && root.Left.Left == nil && root.Left.Right == nil {
+		leftVal = root.Left.Val
+	}
+	rightVal := SumOfLeftLeaves(root.Right)
+	return leftVal + rightVal
+}
+
+// No.513 找树左下角的值
+func FindBottomLeftValue(root *TreeNode) int {
+	q := []*TreeNode{}
+	q = append(q, root)
+	var res int
+	for len(q) != 0 {
+		n := len(q)
+		for i := 0; i < n; i++ {
+			node := q[i]
+			if i == 0 {
+				res = node.Val
+			}
+			if node.Left != nil {
+				q = append(q, node.Left)
+			}
+			if node.Right != nil {
+				q = append(q, node.Right)
+			}
+		}
+		q = q[n:]
+	}
+	return res
 }
