@@ -1,6 +1,8 @@
 package leetcode_master
 
-import "strconv"
+import (
+	"strconv"
+)
 
 type TreeNode struct {
 	Val   int
@@ -219,4 +221,38 @@ func FindBottomLeftValue(root *TreeNode) int {
 		q = q[n:]
 	}
 	return res
+}
+
+// 117. 路径之和
+func HasPathSum(root *TreeNode, targetSum int) bool {
+	if root == nil {
+		return false
+	}
+	if root.Left == nil && root.Right == nil {
+		return targetSum == root.Val
+	}
+	left := HasPathSum(root.Left, targetSum-root.Val)
+	right := HasPathSum(root.Right, targetSum-root.Val)
+	return left || right
+}
+
+// 106. 从中序和后序遍历序列构造二叉树
+func BuildTree(inorder []int, postorder []int) *TreeNode {
+	n := len(inorder)
+	if n == 0 {
+		return nil
+	}
+	midVal, midIndex := postorder[n-1], 0
+	for i := 0; i < n; i++ {
+		if inorder[i] == midVal {
+			midIndex = i
+		}
+	}
+	left := BuildTree(inorder[0:midIndex], postorder[0:midIndex])
+	right := BuildTree(inorder[midIndex+1:], postorder[midIndex:n-1])
+	return &TreeNode{
+		Val:   midVal,
+		Left:  left,
+		Right: right,
+	}
 }
