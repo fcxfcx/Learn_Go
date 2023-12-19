@@ -1,6 +1,7 @@
 package leetcode_master
 
 import (
+	"math"
 	"strconv"
 )
 
@@ -255,4 +256,76 @@ func BuildTree(inorder []int, postorder []int) *TreeNode {
 		Left:  left,
 		Right: right,
 	}
+}
+
+// No.654 最大二叉树
+func ConstructMaximumBinaryTree(nums []int) *TreeNode {
+	n := len(nums)
+	if n == 0 {
+		return nil
+	}
+	maxIndex := 0
+	for i := 0; i < n; i++ {
+		if nums[i] >= nums[maxIndex] {
+			maxIndex = i
+		}
+	}
+	leftTree := ConstructMaximumBinaryTree(nums[0:maxIndex])
+	var rightTree *TreeNode
+	if maxIndex != n {
+		rightTree = ConstructMaximumBinaryTree(nums[maxIndex+1:])
+	}
+	return &TreeNode{
+		Val:   nums[maxIndex],
+		Left:  leftTree,
+		Right: rightTree,
+	}
+}
+
+// No.617 合并二叉树
+func MergeTrees(root1 *TreeNode, root2 *TreeNode) *TreeNode {
+	if root1 == nil {
+		return root2
+	}
+	if root2 == nil {
+		return root1
+	}
+	root1.Val += root2.Val
+	root1.Left = MergeTrees(root1.Left, root2.Left)
+	root1.Right = MergeTrees(root1.Right, root2.Right)
+	return root1
+}
+
+// No.700 二叉搜索树的搜索
+func SearchBST(root *TreeNode, val int) *TreeNode {
+	if root == nil {
+		return nil
+	}
+	if root.Val == val {
+		return root
+	} else if root.Val < val {
+		return SearchBST(root.Right, val)
+	} else {
+		return SearchBST(root.Left, val)
+	}
+}
+
+// No.98 验证二叉搜索树
+func isValidBST(root *TreeNode) bool {
+	if root == nil {
+		return true
+	}
+	var valid func(node *TreeNode, min int, max int) bool
+	valid = func(node *TreeNode, min, max int) bool {
+		if node == nil {
+			return true
+		}
+		if node.Val >= max || node.Val <= min {
+			return false
+		}
+		left := valid(node.Left, min, node.Val)
+		right := valid(node.Right, root.Val, max)
+		return left && right
+	}
+	return valid(root, math.MinInt, math.MaxInt)
 }
