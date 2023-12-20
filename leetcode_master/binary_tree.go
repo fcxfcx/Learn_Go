@@ -311,7 +311,7 @@ func SearchBST(root *TreeNode, val int) *TreeNode {
 }
 
 // No.98 验证二叉搜索树
-func isValidBST(root *TreeNode) bool {
+func IsValidBST(root *TreeNode) bool {
 	if root == nil {
 		return true
 	}
@@ -328,4 +328,54 @@ func isValidBST(root *TreeNode) bool {
 		return left && right
 	}
 	return valid(root, math.MinInt, math.MaxInt)
+}
+
+// No.501 二叉搜索树中的众数
+func FindMode(root *TreeNode) []int {
+	var pre *TreeNode
+	result := []int{}
+	maxCount, count := 0, 0
+	var traversal func(node *TreeNode)
+	traversal = func(node *TreeNode) {
+		if node == nil {
+			return
+		}
+		traversal(node.Left)
+		if pre == nil {
+			count = 1
+		} else if node.Val == pre.Val {
+			count++
+		} else {
+			count = 1
+		}
+		pre = node
+		if count == maxCount {
+			result = append(result, node.Val)
+		} else if count > maxCount {
+			maxCount = count
+			result = []int{node.Val}
+		}
+		traversal(node.Right)
+	}
+	traversal(root)
+	return result
+}
+
+// No.236 二叉树的最近公共祖先
+func LowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
+	if root == p || root == q || root == nil {
+		return root
+	}
+	left := LowestCommonAncestor(root.Left, p, q)
+	right := LowestCommonAncestor(root.Right, p, q)
+	if left != nil && right != nil {
+		return root
+	}
+	if left == nil && right != nil {
+		return right
+	} else if left != nil && right == nil {
+		return left
+	} else {
+		return nil
+	}
 }
