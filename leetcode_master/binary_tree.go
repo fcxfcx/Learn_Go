@@ -379,3 +379,50 @@ func LowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
 		return nil
 	}
 }
+
+// No.701 二叉搜索树中的插入操作
+func InsertIntoBST(root *TreeNode, val int) *TreeNode {
+	if root == nil {
+		return &TreeNode{
+			Val: val,
+		}
+	}
+	if root.Val < val {
+		root.Right = InsertIntoBST(root.Right, val)
+	} else {
+		root.Left = InsertIntoBST(root.Left, val)
+	}
+	return root
+}
+
+// No.450 删除二叉搜索树中的节点
+func DeleteNode(root *TreeNode, key int) *TreeNode {
+	if root == nil {
+		return root
+	}
+	if root.Val < key {
+		root.Right = DeleteNode(root.Right, key)
+	} else if root.Val > key {
+		root.Left = DeleteNode(root.Left, key)
+	} else {
+		if root.Left == nil && root.Right == nil {
+			//情况1.左右孩子都为空，直接删除，返回空
+			return nil
+		} else if root.Left == nil && root.Right != nil {
+			// 情况2. 仅左孩子为空，返回右孩子
+			return root.Right
+		} else if root.Left != nil && root.Right == nil {
+			// 情况3. 仅右孩子为空，返回左孩子
+			return root.Left
+		} else if root.Left != nil && root.Right != nil {
+			// 情况4. 左右孩子都不为空，将左子树放到右子树的左下角
+			cur := root.Right
+			for cur.Left != nil {
+				cur = cur.Left
+			}
+			cur.Left = root.Left
+			return root.Right
+		}
+	}
+	return root
+}
