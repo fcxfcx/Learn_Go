@@ -426,3 +426,35 @@ func DeleteNode(root *TreeNode, key int) *TreeNode {
 	}
 	return root
 }
+
+// No.669 修剪二叉树
+func TrimBST(root *TreeNode, low int, high int) *TreeNode {
+	if root == nil {
+		return nil
+	}
+	if root.Val < low {
+		return TrimBST(root.Right, low, high)
+	} else if root.Val > high {
+		return TrimBST(root.Left, low, high)
+	}
+	root.Left = TrimBST(root.Left, low, root.Val)
+	root.Right = TrimBST(root.Right, root.Val, high)
+	return root
+}
+
+// No.538 把二叉搜索树转换为累加树
+func ConvertBST(root *TreeNode) *TreeNode {
+	total := 0
+	var traversal func(node *TreeNode)
+	traversal = func(node *TreeNode) {
+		if node == nil {
+			return
+		}
+		traversal(node.Right)
+		total += node.Val
+		node.Val = total
+		traversal(node.Left)
+	}
+	traversal(root)
+	return root
+}
