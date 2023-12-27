@@ -1,6 +1,10 @@
 package leetcode_master
 
-import "sort"
+import (
+	"sort"
+	"strconv"
+	"strings"
+)
 
 // No.77 组合
 func Combine(n int, k int) [][]int {
@@ -135,6 +139,73 @@ func CombinationSum2(candidates []int, target int) (res [][]int) {
 			used[i] = 0
 			path = path[:len(path)-1]
 			target += val
+		}
+	}
+	backtrack(0)
+	return
+}
+
+// No.131 分割回文串
+func Partition(s string) (res [][]string) {
+	n := len(s)
+	isPlalindrome := make([][]bool, n)
+	for i := range isPlalindrome {
+		isPlalindrome[i] = make([]bool, n)
+	}
+	for i := n - 1; i >= 0; i-- {
+		for j := i; j < n; j++ {
+			if i == j {
+				isPlalindrome[i][j] = true
+			} else if j-i == 1 {
+				isPlalindrome[i][j] = s[i] == s[j]
+			} else {
+				isPlalindrome[i][j] = s[i] == s[j] && isPlalindrome[i+1][j-1]
+			}
+		}
+	}
+
+	path := []string{}
+	var backtrack func(start int)
+	backtrack = func(start int) {
+		if start >= n {
+			res = append(res, append([]string(nil), path...))
+			return
+		}
+		for end := start; end < n; end++ {
+			if !isPlalindrome[start][end] {
+				continue
+			}
+			path = append(path, s[start:end+1])
+			backtrack(end + 1)
+			path = path[:len(path)-1]
+		}
+	}
+	backtrack(0)
+	return
+}
+
+// No.93 复原IP地址
+func RestoreIpAddresses(s string) (res []string) {
+	path := []string{}
+	n := len(s)
+	var backtrack func(start int)
+	backtrack = func(start int) {
+		if start >= n && len(path) == 4 {
+			res = append(res, strings.Join(path, "."))
+			return
+		}
+		for end := start + 1; end <= start+3 && end <= n; end++ {
+			if s[start] == '0' && end > start+1 {
+				// 先导0
+				break
+			}
+			val, _ := strconv.Atoi(s[start:end])
+			if val > 255 {
+				continue
+			}
+			path = append(path, s[start:end])
+			backtrack(end)
+			path = path[:len(path)-1]
 		}
 	}
 	backtrack(0)

@@ -5,6 +5,6 @@ import (
 )
 
 func main() {
-	nums := []int{1, 1, 1, 2, 2, 3}
-	leetcode_master.TopKFrequent(nums, 2)
+	str := "0000"
+	leetcode_master.RestoreIpAddresses(str)
 }
