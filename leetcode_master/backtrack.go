@@ -211,3 +211,69 @@ func RestoreIpAddresses(s string) (res []string) {
 	backtrack(0)
 	return
 }
+
+// No.78 子集
+func Subsets(nums []int) (res [][]int) {
+	path := []int{}
+	sort.Ints(nums)
+	var bakctrack func(start int)
+	bakctrack = func(start int) {
+		temp := make([]int, len(path))
+		copy(temp, path)
+		res = append(res, temp)
+		for i := start; i < len(nums); i++ {
+			path = append(path, nums[i])
+			bakctrack(i + 1)
+			path = path[:len(path)-1]
+		}
+	}
+	bakctrack(0)
+	return
+}
+
+// No.90 子集Ⅱ
+func SubsetsWithDup(nums []int) (res [][]int) {
+	path := []int{}
+	sort.Ints(nums)
+	var backtarck func(start int)
+	backtarck = func(start int) {
+		temp := make([]int, len(path))
+		copy(temp, path)
+		res = append(res, temp)
+		for i := start; i < len(nums); i++ {
+			if i > start && nums[i] == nums[i-1] {
+				continue
+			}
+			path = append(path, nums[i])
+			backtarck(i + 1)
+			path = path[:len(path)-1]
+		}
+	}
+	backtarck(0)
+	return
+}
+
+// No.491 非递减子序列
+func FindSubsequences(nums []int) (res [][]int) {
+	path := []int{}
+	var backtrack func(start int)
+	backtrack = func(start int) {
+		if len(path) >= 2 {
+			temp := make([]int, len(path))
+			copy(temp, path)
+			res = append(res, temp)
+		}
+		used := map[int]bool{}
+		for i := start; i < len(nums); i++ {
+			if (start != 0 && nums[i] < path[len(path)-1]) || used[nums[i]] {
+				continue
+			}
+			used[nums[i]] = true
+			path = append(path, nums[i])
+			backtrack(i + 1)
+			path = path[:len(path)-1]
+		}
+	}
+	backtrack(0)
+	return
+}
