@@ -277,3 +277,56 @@ func FindSubsequences(nums []int) (res [][]int) {
 	backtrack(0)
 	return
 }
+
+// No.46 全排列
+func Permute(nums []int) (res [][]int) {
+	hashset := make(map[int]bool, 0)
+	path := []int{}
+	var backtrack func()
+	backtrack = func() {
+		if len(path) == len(nums) {
+			res = append(res, append([]int{}, path...))
+			return
+		}
+		for i := 0; i < len(nums); i++ {
+			if hashset[nums[i]] {
+				continue
+			}
+			path = append(path, nums[i])
+			hashset[nums[i]] = true
+			backtrack()
+			hashset[nums[i]] = false
+			path = path[:len(path)-1]
+		}
+	}
+	backtrack()
+	return
+}
+
+// No.47 全排列2
+func PermuteUnique(nums []int) (res [][]int) {
+	hashset := make(map[int]bool, 0)
+	path := []int{}
+	sort.Ints(nums)
+	var backtrack func()
+	backtrack = func() {
+		if len(path) == len(nums) {
+			res = append(res, append([]int{}, path...))
+			return
+		}
+		for i := 0; i < len(nums); i++ {
+			if i > 0 && nums[i] == nums[i-1] && hashset[nums[i-1]] {
+				continue
+			}
+			if !hashset[nums[i]] {
+				path = append(path, nums[i])
+				hashset[nums[i]] = true
+				backtrack()
+				hashset[nums[i]] = false
+				path = path[:len(path)-1]
+			}
+		}
+	}
+	backtrack()
+	return
+}
