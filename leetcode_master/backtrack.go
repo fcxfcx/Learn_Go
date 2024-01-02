@@ -34,8 +34,8 @@ func Combine(n int, k int) [][]int {
 // No.216 组合总和 III
 func CombinationSum3(k int, n int) (res [][]int) {
 	path := []int{}
-	var backtarck func(i, total int)
-	backtarck = func(i, total int) {
+	var backtrack func(i, total int)
+	backtrack = func(i, total int) {
 		if len(path) > k || (n-total) > 9*(k-len(path)) {
 			return
 		}
@@ -47,11 +47,11 @@ func CombinationSum3(k int, n int) (res [][]int) {
 		}
 		for next := i + 1; next <= 9; next++ {
 			path = append(path, next)
-			backtarck(next, total+next)
+			backtrack(next, total+next)
 			path = path[:len(path)-1]
 		}
 	}
-	backtarck(0, 0)
+	backtrack(0, 0)
 	return
 }
 
@@ -235,8 +235,8 @@ func Subsets(nums []int) (res [][]int) {
 func SubsetsWithDup(nums []int) (res [][]int) {
 	path := []int{}
 	sort.Ints(nums)
-	var backtarck func(start int)
-	backtarck = func(start int) {
+	var backtrack func(start int)
+	backtrack = func(start int) {
 		temp := make([]int, len(path))
 		copy(temp, path)
 		res = append(res, temp)
@@ -245,11 +245,11 @@ func SubsetsWithDup(nums []int) (res [][]int) {
 				continue
 			}
 			path = append(path, nums[i])
-			backtarck(i + 1)
+			backtrack(i + 1)
 			path = path[:len(path)-1]
 		}
 	}
-	backtarck(0)
+	backtrack(0)
 	return
 }
 
@@ -329,4 +329,125 @@ func PermuteUnique(nums []int) (res [][]int) {
 	}
 	backtrack()
 	return
+}
+
+// No.332 重新安排行程
+type pair struct {
+	// pair储存机票目的地和当前航线是否已经使用
+	target  string
+	visited bool
+}
+
+// 储存pair数组，实现sort接口
+type pairs []*pair
+
+func (p pairs) Len() int {
+	return len(p)
+}
+
+func (p pairs) Swap(i, j int) {
+	p[i], p[j] = p[j], p[i]
+}
+
+func (p pairs) Less(i, j int) bool {
+	return p[i].target < p[j].target
+}
+
+func FindItinerary(tickets [][]string) (res []string) {
+	// record储存每个机场可到达的目的地，以及当前航线是否已选择
+	targets := make(map[string]pairs, 0)
+	for _, ticket := range tickets {
+		if targets[ticket[0]] == nil {
+			targets[ticket[0]] = make(pairs, 0)
+		}
+		// 添加新的可达目的地，初始置为未选择
+		targets[ticket[0]] = append(targets[ticket[0]], &pair{target: ticket[1], visited: false})
+	}
+	for k := range targets {
+		// 按字典升序排序目的地，保证第一个选出的就是字典序最小的结果
+		sort.Sort(targets[k])
+	}
+	var backtrack func() bool
+	backtrack = func() bool {
+		if len(tickets)+1 == len(res) {
+			// 结果机场数量比票数大1说明已经构建出所有路径，找到了结果
+			return true
+		}
+		// 当前所在机场
+		here := res[len(res)-1]
+		for i, t := range targets[here] {
+			if i > 0 && targets[here][i-1].target == t.target && !targets[here][i-1].visited {
+				// 剪枝，如果上一个目的地和当前的相同，且上一个没用过，说明是从上一个回溯回来的
+				// 上一个不可能那么当前的也不可能，直接跳过
+				continue
+			}
+			// 枚举所有可能的目的地，已经使用过的航线除外
+			if !t.visited {
+				res = append(res, t.target)
+				t.visited = true
+				if backtrack() {
+					return true
+				}
+				res = res[:len(res)-1]
+				t.visited = false
+			}
+		}
+		return false
+	}
+	// 所有机票从JFK出发
+	res = append(res, "JFK")
+	backtrack()
+	return
+}
+
+// No.51 N皇后
+func SolveNQueens(n int) (res [][]string) {
+	// 判断某一列上有皇后
+	column := make([]bool, n)
+	// 判断两个对角线上有皇后
+	diagonal_1, diagonal_2 := make(map[int]bool, 0), make(map[int]bool, 0)
+	// 储存每行的皇后位置
+	rows := make([]string, 0)
+	var backtrack func(row int)
+	backtrack = func(row int) {
+		if len(rows) == n {
+			res = append(res, append([]string{}, rows...))
+			return
+		}
+		for i := 0; i < n; i++ {
+			// 枚举当前行每一列的可能性
+			if column[i] {
+				continue
+			}
+			if diagonal_1[i+row] {
+				continue
+			}
+			if diagonal_2[i-row] {
+				continue
+			}
+			rows = append(rows, buildQString(i, n))
+			column[i] = true
+			diagonal_1[i+row] = true
+			diagonal_2[i-row] = true
+			backtrack(row + 1)
+			rows = rows[:len(rows)-1]
+			column[i] = false
+			diagonal_1[i+row] = false
+			diagonal_2[i-row] = false
+		}
+	}
+	backtrack(0)
+	return
+}
+
+func buildQString(i, n int) string {
+	res := []byte{}
+	for j := 0; j < n; j++ {
+		if j != i {
+			res = append(res, '.')
+		} else {
+			res = append(res, 'Q')
+		}
+	}
+	return string(res)
 }
