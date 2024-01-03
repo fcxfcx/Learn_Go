@@ -451,3 +451,74 @@ func buildQString(i, n int) string {
 	}
 	return string(res)
 }
+
+// No.37 解数独
+func SolveSudoku(board [][]byte) {
+	// 一行中已经使用过的数字（例如rowUsed[0][0]代表第一行是否用过数字1）
+	rowUsed := [9][9]bool{}
+	// 一列中已经使用过的数字
+	colUsed := [9][9]bool{}
+	// 小九宫格内已经使用过的数字
+	squareUsed := [9][9]bool{}
+
+	// 初始化记录已经填入的数字
+	for i := 0; i < 9; i++ {
+		for j := 0; j < 9; j++ {
+			if board[i][j] != '.' {
+				num := board[i][j] - '1'
+				rowUsed[i][num] = true
+				colUsed[j][num] = true
+				// 在哪个3x3小方格内
+				squareIndex := (i/3)*3 + j/3
+				squareUsed[squareIndex][num] = true
+			}
+		}
+	}
+
+	var backtrack func(row, col int) bool
+	backtrack = func(row, col int) bool {
+		if row == 9 {
+			// 假设遍历顺序是从左到右从上到下
+			// 到了第10行则说明已经全部填完了
+			return true
+		}
+		// 下一个位置
+		var nextRow, nextCol int
+		if col == 8 {
+			// 换行
+			nextRow = row + 1
+			nextCol = 0
+		} else {
+			// 不换行
+			nextRow = row
+			nextCol = col + 1
+		}
+		// 判断当前位置是否已经填入，已经填入就去下一个位置
+		if board[row][col] != '.' {
+			if backtrack(nextRow, nextCol) {
+				return true
+			}
+		} else {
+			// 当前的3x3小方格
+			sIndex := (row/3)*3 + col/3
+			for i := 0; i < 9; i++ {
+				if rowUsed[row][i] || colUsed[col][i] || squareUsed[sIndex][i] {
+					continue
+				}
+				board[row][col] = byte('1' + i)
+				rowUsed[row][i] = true
+				colUsed[col][i] = true
+				squareUsed[sIndex][i] = true
+				if backtrack(nextRow, nextCol) {
+					return true
+				}
+				board[row][col] = '.'
+				rowUsed[row][i] = false
+				colUsed[col][i] = false
+				squareUsed[sIndex][i] = false
+			}
+		}
+		return false
+	}
+	backtrack(0, 0)
+}
