@@ -55,3 +55,44 @@ func MaxSubArray(nums []int) int {
 	}
 	return result
 }
+
+// No.122 买卖股票的最佳时机Ⅱ
+func MaxProfit(prices []int) int {
+	total := 0
+	for i := 1; i < len(prices); i++ {
+		if prices[i] > prices[i-1] {
+			total += (prices[i] - prices[i-1])
+		}
+	}
+	return total
+}
+
+// No.55 跳跃游戏
+func CanJump(nums []int) bool {
+	maxCover := 0
+	for i := 0; i < len(nums); i++ {
+		if i <= maxCover && i+nums[i] > maxCover {
+			maxCover = i + nums[i]
+		}
+	}
+	return maxCover >= len(nums)
+}
+
+// No.45 跳跃游戏Ⅱ
+func Jump(nums []int) int {
+	totalStep := 0
+	for tempIndex := 0; tempIndex < len(nums); {
+		if tempIndex+nums[tempIndex] >= len(nums)-1 {
+			break
+		}
+		nextIndex := tempIndex
+		for i := tempIndex; i < tempIndex+nums[tempIndex]; i++ {
+			if i+nums[i] > nextIndex+nums[nextIndex] {
+				nextIndex = i
+			}
+		}
+		totalStep++
+		tempIndex = nextIndex
+	}
+	return totalStep
+}
