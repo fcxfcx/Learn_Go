@@ -96,3 +96,99 @@ func Jump(nums []int) int {
 	}
 	return totalStep
 }
+
+// No.1005 K次取反后最大化的数组和
+func LargestSumAfterKNegations(nums []int, k int) int {
+	total := 0
+	sort.Slice(nums, func(i, j int) bool {
+		return math.Abs(float64(nums[i])) < math.Abs(float64(nums[j]))
+	})
+
+	for i := len(nums) - 1; i >= 0; i-- {
+		if nums[i] < 0 && k > 0 {
+			k--
+			nums[i] = -nums[i]
+		}
+	}
+	if k%2 == 1 {
+		nums[0] = -nums[0]
+	}
+	for i := 0; i < len(nums); i++ {
+		total += nums[i]
+	}
+	return total
+}
+
+// No.134 加油站
+func CanCompleteCircuit(gas []int, cost []int) int {
+	totalRest, tempRest := 0, 0
+	index := 0
+	for i := 0; i < len(gas); i++ {
+		totalRest += (gas[i] - cost[i])
+		tempRest += (gas[i] - cost[i])
+		if tempRest <= 0 {
+			index = i + 1
+			tempRest = 0
+		}
+	}
+	if totalRest < 0 {
+		return -1
+	} else {
+		return index
+	}
+}
+
+// No.135 分糖果
+func Candy(ratings []int) int {
+	n := len(ratings)
+	// 总消耗的糖果数
+	candies := make([]int, n)
+	for index, _ := range candies {
+		candies[index] = 1
+	}
+	// 从左到右保证分更高的有更多糖果
+	for i := 1; i < n; i++ {
+		if ratings[i] > ratings[i-1] {
+			candies[i] = candies[i-1] + 1
+		}
+	}
+	// 从右到左保证分更高的有更多糖果
+	for i := n - 2; i >= 0; i-- {
+		if ratings[i] > ratings[i+1] {
+			candies[i] = max(candies[i+1]+1, candies[i])
+		}
+	}
+	total := 0
+	for _, num := range candies {
+		total += num
+	}
+	return total
+}
+
+// No.860 柠檬水找零
+func LemonadeChange(bills []int) bool {
+	// 用一个数组存储当前5、10美元的数量
+	changes := [2]int{0, 0}
+	for i := 0; i < len(bills); i++ {
+		if bills[i] == 5 {
+			changes[0] += 1
+		} else if bills[i] == 10 {
+			changes[1] += 1
+			if changes[0] == 0 {
+				return false
+			} else {
+				changes[0] -= 1
+			}
+		} else {
+			if changes[1] > 0 && changes[0] > 0 {
+				changes[1] -= 1
+				changes[0] -= 1
+			} else if changes[0] >= 3 {
+				changes[0] -= 3
+			} else {
+				return false
+			}
+		}
+	}
+	return true
+}
