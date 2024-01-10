@@ -5,6 +5,6 @@ import (
 )
 
 func main() {
-	ratings := []int{1, 3, 2, 2, 1}
-	leetcode_master.Candy(ratings)
+	points := [][]int{{9, 12}, {1, 10}, {4, 11}, {8, 12}, {3, 9}, {6, 9}, {6, 7}}
+	leetcode_master.FindMinArrowShots(points)
 }
