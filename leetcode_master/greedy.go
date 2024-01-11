@@ -3,6 +3,7 @@ package leetcode_master
 import (
 	"math"
 	"sort"
+	"strconv"
 )
 
 // No.455 分发饼干
@@ -246,6 +247,78 @@ func PartitionLabels(s string) []int {
 			result = append(result, right-left+1)
 			left = i + 1
 		}
+	}
+	return result
+}
+
+// No.56 合并区间
+func Merge(intervals [][]int) [][]int {
+	sort.Slice(intervals, func(i, j int) bool {
+		return intervals[i][0] < intervals[j][0]
+	})
+	ans := [][]int{}
+	pre := intervals[0]
+	for i := 1; i < len(intervals); i++ {
+		if intervals[i][0] < intervals[i-1][1] {
+			pre[1] = max(intervals[i][1], intervals[i-1][1])
+		} else {
+			ans = append(ans, pre)
+			pre = intervals[i]
+		}
+	}
+	ans = append(ans, pre)
+	return ans
+}
+
+// No.738 单调递增的数字
+func MonotoneIncreasingDigits(n int) int {
+	s := strconv.Itoa(n)
+	str := []byte(s)
+	if len(str) == 1 {
+		return n
+	}
+	for i := len(str) - 1; i > 0; i-- {
+		if str[i-1] > str[i] {
+			str[i-1]--
+			for j := i; j < len(str); j++ {
+				str[j] = '9'
+			}
+		}
+	}
+	n, _ = strconv.Atoi(string(str))
+	return n
+}
+
+// No.968 监控二叉树
+func MinCameraCover(root *TreeNode) int {
+	result := 0
+	// 分为三个状态，0代表无覆盖，1代表有摄像头，2代表有覆盖
+	var traversal func(node *TreeNode) int
+	traversal = func(node *TreeNode) int {
+		if node == nil {
+			// 空结点说明到底了，认为是有覆盖的，因为叶子节点不放摄像头
+			return 2
+		}
+		left := traversal(node.Left)
+		right := traversal(node.Right)
+		if left == 2 && right == 2 {
+			// 左右孩子结点都是有覆盖，当前节点则无覆盖
+			return 0
+		}
+		if left == 0 || right == 0 {
+			// 左右孩子节点至少有一个无覆盖，当前节点需要摄像头
+			result++
+			return 1
+		}
+		if left == 1 || right == 1 {
+			// 左右孩子节点至少有一个有摄像头，当前节点已覆盖
+			return 2
+		}
+		// 并不会有这种情况，上面为了逻辑清晰没有用else
+		return -1
+	}
+	if traversal(root) == 0 {
+		result++
 	}
 	return result
 }
