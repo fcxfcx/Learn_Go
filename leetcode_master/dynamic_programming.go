@@ -58,3 +58,36 @@ func UniquePaths(m int, n int) int {
 	}
 	return dp[n-1]
 }
+
+// No.63 不同路径Ⅱ
+func UniquePathsWithObstacles(obstacleGrid [][]int) int {
+	m, n := len(obstacleGrid), len(obstacleGrid[0])
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			if i == 0 && j == 0 {
+				obstacleGrid[i][j] = 1
+			} else if obstacleGrid[i][j] == 1 {
+				obstacleGrid[i][j] = 0
+			} else if i == 0 {
+				obstacleGrid[i][j] = obstacleGrid[i][j-1]
+			} else if j == 0 {
+				obstacleGrid[i][j] = obstacleGrid[i-1][j]
+			} else {
+				obstacleGrid[i][j] = obstacleGrid[i-1][j] + obstacleGrid[i][j-1]
+			}
+		}
+	}
+	return obstacleGrid[m-1][n-1]
+}
+
+// No.343 整数拆分
+func IntegerBreak(n int) int {
+	dp := make([]int, n+1)
+	dp[2] = 1
+	for i := 3; i <= n; i++ {
+		for j := 1; j <= i/2; j++ {
+			dp[i] = max(dp[i], max(dp[i-j]*j, i*(i-j)))
+		}
+	}
+	return dp[n]
+}
