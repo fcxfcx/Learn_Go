@@ -91,3 +91,38 @@ func IntegerBreak(n int) int {
 	}
 	return dp[n]
 }
+
+// No.96 不同的二叉搜索树
+func NumTrees(n int) int {
+	dp := make([]int, n+1)
+	dp[0] = 1
+	for i := 1; i <= n; i++ {
+		for j := 1; j <= i; j++ {
+			dp[i] += dp[i-j] * dp[j-1]
+		}
+	}
+	return dp[n]
+}
+
+// No.416 分割等和子集
+func CanPartition(nums []int) bool {
+	dp := [10001]int{}
+	sum := 0
+	for _, num := range nums {
+		sum += num
+	}
+	if sum%2 == 1 {
+		return false
+	}
+	target := sum / 2
+	for i := 0; i < len(nums); i++ {
+		for j := target; j >= nums[i]; j-- {
+			dp[j] = max(dp[j], dp[j-nums[i]]+nums[i])
+		}
+	}
+	if dp[target] == target {
+		return true
+	} else {
+		return false
+	}
+}
