@@ -126,3 +126,43 @@ func CanPartition(nums []int) bool {
 		return false
 	}
 }
+
+// No.1049 最后一块石头的重量II
+func LastStoneWeightII(stones []int) int {
+	sum := 0
+	dp := [15001]int{}
+	for _, num := range stones {
+		sum += num
+	}
+	target := sum / 2
+	for i := 0; i < len(stones); i++ {
+		for j := target; j >= stones[i]; j-- {
+			dp[j] = max(dp[j], dp[j-stones[i]]+stones[i])
+		}
+	}
+	return (sum - dp[target]) - dp[target]
+}
+
+// No.494 目标和
+func FindTargetSumWays(nums []int, target int) int {
+	sum := 0
+	for _, num := range nums {
+		sum += num
+	}
+	// 如果不能被2整除说明不可能有解
+	if (sum+target)%2 != 0 {
+		return 0
+	}
+	if abs(target) > sum {
+		return 0
+	}
+	bag := (sum + target) / 2
+	dp := make([]int, bag+1)
+	dp[0] = 1
+	for i := 0; i < len(nums); i++ {
+		for j := bag; j >= nums[i]; j-- {
+			dp[j] += dp[j-nums[i]]
+		}
+	}
+	return dp[bag]
+}
