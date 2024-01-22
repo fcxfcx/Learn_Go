@@ -166,3 +166,34 @@ func FindTargetSumWays(nums []int, target int) int {
 	}
 	return dp[bag]
 }
+
+// No.474
+func findMaxForm(strs []string, m int, n int) int {
+	// 把字符串的1和0统计出来
+	bitStrs := [][2]int{}
+	for _, str := range strs {
+		zero, one := 0, 0
+		for _, b := range []byte(str) {
+			if b-'0' == 0 {
+				zero++
+			} else {
+				one++
+			}
+		}
+		bitStrs = append(bitStrs, [2]int{zero, one})
+	}
+	// 构造二维背包
+	dp := make([][]int, m+1)
+	for index := range dp {
+		dp[index] = make([]int, n+1)
+	}
+	// 01背包问题
+	for _, bitStr := range bitStrs {
+		for i := m; i >= bitStr[0]; i-- {
+			for j := n; j >= bitStr[1]; j-- {
+				dp[i][j] = max(dp[i][j], dp[i-bitStr[0]][j-bitStr[1]]+1)
+			}
+		}
+	}
+	return dp[m][n]
+}
