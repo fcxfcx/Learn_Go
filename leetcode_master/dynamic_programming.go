@@ -168,7 +168,7 @@ func FindTargetSumWays(nums []int, target int) int {
 }
 
 // No.474
-func findMaxForm(strs []string, m int, n int) int {
+func FindMaxForm(strs []string, m int, n int) int {
 	// 把字符串的1和0统计出来
 	bitStrs := [][2]int{}
 	for _, str := range strs {
@@ -196,4 +196,16 @@ func findMaxForm(strs []string, m int, n int) int {
 		}
 	}
 	return dp[m][n]
+}
+
+// No.518 零钱兑换Ⅱ
+func Change(amount int, coins []int) int {
+	dp := make([]int, amount+1)
+	dp[0] = 1
+	for i := 0; i < len(coins); i++ {
+		for j := coins[i]; j <= amount; j-- {
+			dp[j] += dp[j-coins[i]]
+		}
+	}
+	return dp[amount]
 }
