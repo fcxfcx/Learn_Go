@@ -1,5 +1,7 @@
 package leetcode_master
 
+import "math"
+
 // No.509 斐波那契数
 func Fib(n int) int {
 	pre, cur := 0, 1
@@ -203,9 +205,24 @@ func Change(amount int, coins []int) int {
 	dp := make([]int, amount+1)
 	dp[0] = 1
 	for i := 0; i < len(coins); i++ {
-		for j := coins[i]; j <= amount; j-- {
+		for j := coins[i]; j <= amount; j++ {
 			dp[j] += dp[j-coins[i]]
 		}
 	}
 	return dp[amount]
+}
+
+// No.279 完全平方数
+func NumSquares(n int) int {
+	dp := make([]int, n+1)
+	dp[0] = 0
+	for i := 1; i <= n; i++ {
+		dp[i] = math.MaxInt
+	}
+	for i := 1; i*i <= n; i++ {
+		for j := i * i; j <= n; j++ {
+			dp[j] = min(dp[j], dp[j-i*i]+1)
+		}
+	}
+	return dp[n]
 }
