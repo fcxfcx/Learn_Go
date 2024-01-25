@@ -226,3 +226,22 @@ func NumSquares(n int) int {
 	}
 	return dp[n]
 }
+
+// No.139 单词拆分
+func WordBreak(s string, wordDict []string) bool {
+	hash := make(map[string]bool, 0)
+	for _, word := range wordDict {
+		hash[word] = true
+	}
+	dp := make([]bool, len(s)+1)
+	dp[0] = true
+	for i := 1; i <= len(s); i++ {
+		for j := 0; j <= i; j++ {
+			if dp[j] && hash[s[j:i]] {
+				dp[i] = true
+				break
+			}
+		}
+	}
+	return dp[len(s)]
+}
