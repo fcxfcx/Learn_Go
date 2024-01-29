@@ -245,3 +245,35 @@ func WordBreak(s string, wordDict []string) bool {
 	}
 	return dp[len(s)]
 }
+
+// No.198 打家劫舍
+func Rob(nums []int) int {
+	n := len(nums)
+	if n == 0 {
+		return 0
+	} else if n == 1 {
+		return nums[0]
+	}
+	// 使用dp数组储存每一家的最大收益
+	dp := make([]int, n)
+	dp[0] = nums[0]
+	dp[1] = max(nums[0], nums[1])
+	for i := 2; i < len(nums); i++ {
+		dp[i] = max(dp[i-2]+nums[i], dp[i-1])
+	}
+	return dp[n-1]
+}
+
+// No.213 打家劫舍Ⅱ
+func RobTwo(nums []int) int {
+	n := len(nums)
+	if n == 0 {
+		return 0
+	}
+	if n == 1 {
+		return nums[0]
+	}
+	result1 := Rob(nums[1:])
+	result2 := Rob(nums[0 : n-1])
+	return max(result1, result2)
+}
