@@ -277,3 +277,23 @@ func RobTwo(nums []int) int {
 	result2 := Rob(nums[0 : n-1])
 	return max(result1, result2)
 }
+
+// No.337 打家劫舍Ⅲ
+func RobTree(root *TreeNode) int {
+	var traversal func(node *TreeNode) [2]int
+	traversal = func(node *TreeNode) [2]int {
+		dp := [2]int{}
+		if node == nil {
+			return [2]int{0, 0}
+		}
+		left := traversal(node.Left)
+		right := traversal(node.Right)
+		// 劫当前节点
+		dp[0] = node.Val + left[1] + right[1]
+		// 不劫当前节点
+		dp[1] = node.Val + max(left[0], left[1]) + max(right[0], right[1])
+		return dp
+	}
+	result := traversal(root)
+	return max(result[0], result[1])
+}
