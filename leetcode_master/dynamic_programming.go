@@ -291,9 +291,57 @@ func RobTree(root *TreeNode) int {
 		// 劫当前节点
 		dp[0] = node.Val + left[1] + right[1]
 		// 不劫当前节点
-		dp[1] = node.Val + max(left[0], left[1]) + max(right[0], right[1])
+		dp[1] = max(left[0], left[1]) + max(right[0], right[1])
 		return dp
 	}
 	result := traversal(root)
 	return max(result[0], result[1])
+}
+
+// No.121 买卖股票的最佳时机
+func ProfitOne(prices []int) int {
+	minPrice := prices[0]
+	profit := 0
+	for i := 1; i < len(prices); i++ {
+		if prices[i] < minPrice {
+			minPrice = prices[i]
+		} else if prices[i]-minPrice > profit {
+			profit = prices[i] - minPrice
+		}
+	}
+	return profit
+}
+
+// No.122 买卖股票的最佳时机Ⅱ
+func ProfitTwo(prices []int) int {
+	total := 0
+	for i := 1; i < len(prices); i++ {
+		if prices[i] > prices[i-1] {
+			total += prices[i] - prices[i-1]
+		}
+	}
+	return total
+}
+
+// No.123 买卖股票的最佳时机Ⅲ
+func ProfitThree(prices []int) int {
+	dp := make([][5]int, len(prices))
+	// 每天有五种状态：
+	// 1. 什么都不做
+	// 2. 第一次购入
+	// 3. 第一次售出
+	// 4. 第二次购入
+	// 5. 第二次售出
+	dp[0] = [5]int{0, -prices[0], 0, -prices[0], 0}
+
+	for i := 1; i < len(prices); i++ {
+		dp[i][0] = dp[i-1][0]
+		// 当天第一次购入状态有两种可能，即当天购入，和延用前一天已经购入的情况
+		dp[i][1] = max(dp[i-1][0]-prices[i], dp[i-1][1])
+		// 当天第一次售出状态有两种可能，即当天售出，和延用前一天售出的状态
+		dp[i][2] = max(dp[i-1][1]+prices[i], dp[i-1][2])
+		dp[i][3] = max(dp[i-1][2]-prices[i], dp[i-1][3])
+		dp[i][4] = max(dp[i-1][3]+prices[i], dp[i-1][4])
+	}
+	return dp[len(prices)-1][4]
 }
