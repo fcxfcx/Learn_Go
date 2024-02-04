@@ -345,3 +345,43 @@ func ProfitThree(prices []int) int {
 	}
 	return dp[len(prices)-1][4]
 }
+
+// No.188 买卖股票的最佳时机Ⅳ
+func ProfitFour(prices []int, k int) int {
+	dp := make([][]int, len(prices))
+	for i := 0; i < len(prices); i++ {
+		dp[i] = make([]int, 2*k+1)
+	}
+	// 初始化dp[0]
+	for i := 1; i < 2*k; i += 2 {
+		dp[0][i] = -prices[0]
+	}
+	// 每天有2*k+1个可能性
+	for i := 1; i < len(prices); i++ {
+		for j := 0; j < 2*k-1; j += 2 {
+			dp[i][j+1] = max(dp[i-1][j+1], dp[i-1][j]-prices[i])
+			dp[i][j+2] = max(dp[i-1][j+2], dp[i-1][j+1]+prices[i])
+		}
+	}
+	return dp[len(prices)-1][2*k]
+}
+
+// No.309 买卖股票的最佳时期含冷冻期
+func MaxProfitFive(prices []int) int {
+	// 每天共有四种状态
+	n := len(prices)
+	dp := make([][4]int, n)
+	// 1. 状态0，持有股票，当天购入
+	// 2. 状态1，不持有股票，但是也不在冷冻期
+	// 3. 状态2，不持有股票，当天售出
+	// 4. 状态3，在冷冻期
+	dp[0] = [4]int{-prices[0], 0, 0, 0}
+	for i := 1; i < n; i++ {
+		dp[i][0] = max(dp[i-1][1]-prices[i], dp[i-1][0], dp[i-1][3]-prices[i])
+		dp[i][1] = max(dp[i-1][1], dp[i-1][3])
+		dp[i][2] = dp[i-1][0] + prices[i]
+		dp[i][3] = dp[i-1][2]
+	}
+
+	return max(dp[n-1][1], dp[n-1][2], dp[n-1][3])
+}

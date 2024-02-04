@@ -1,11 +1,18 @@
 package leetcode_master
 
-func max(a, b int) int {
-	if a > b {
-		return a
-	} else {
-		return b
+func max(nums ...int) int {
+	if len(nums) == 0 {
+		return 0
 	}
+
+	maxValue := nums[0]
+	for _, num := range nums {
+		if num > maxValue {
+			maxValue = num
+		}
+	}
+
+	return maxValue
 }
 
 func min(a, b int) int {
