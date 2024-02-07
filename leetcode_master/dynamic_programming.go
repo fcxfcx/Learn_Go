@@ -422,3 +422,20 @@ func LengthOfLIS(nums []int) int {
 	}
 	return result
 }
+
+// No.674 最长连续递增序列
+func FindLengthOfLCIS(nums []int) int {
+	n := len(nums)
+	dp := make([]int, n)
+	maxLength := 0
+	dp[0] = 1
+	for i := 1; i < n; i++ {
+		if nums[i] > nums[i-1] {
+			dp[i] = dp[i-1] + 1
+			maxLength = max(maxLength, dp[i])
+		} else {
+			dp[i] = 1
+		}
+	}
+	return maxLength
+}
