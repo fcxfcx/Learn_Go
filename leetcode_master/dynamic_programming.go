@@ -439,3 +439,25 @@ func FindLengthOfLCIS(nums []int) int {
 	}
 	return maxLength
 }
+
+// No.718 最长重复子数组
+func FindLength(nums1 []int, nums2 []int) int {
+	m, n := len(nums1), len(nums2)
+	dp := make([][]int, m+1)
+	result := 0
+	for i := 0; i <= m; i++ {
+		dp[i] = make([]int, n+1)
+	}
+	// dp[i][j]代表nums1到i-1和nums2到j-1处最长重复子数组
+	for i := 1; i <= m; i++ {
+		for j := 1; j <= n; j++ {
+			if nums1[i-1] == nums2[j-1] {
+				dp[i][j] = dp[i-1][j-1] + 1
+			}
+			if dp[i][j] > result {
+				result = dp[i][j]
+			}
+		}
+	}
+	return result
+}
