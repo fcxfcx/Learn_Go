@@ -461,3 +461,27 @@ func FindLength(nums1 []int, nums2 []int) int {
 	}
 	return result
 }
+
+// No.1143 最长公共子序列
+func LongestCommonSubsequence(text1 string, text2 string) int {
+	m, n := len(text1), len(text2)
+	dp := make([][]int, m+1)
+	for i := 0; i <= m; i++ {
+		dp[i] = make([]int, n+1)
+	}
+	result := 0
+	// dp[i][j]代表text1到i-1和text2到j-1处最长公共子序列
+	for i := 1; i <= m; i++ {
+		for j := 1; j <= n; j++ {
+			if text1[i-1] == text2[j-1] {
+				dp[i][j] = dp[i-1][j-1] + 1
+			} else {
+				dp[i][j] = max(dp[i-2][j-1], dp[i-1][j-2])
+			}
+			if dp[i][j] > result {
+				result = dp[i][j]
+			}
+		}
+	}
+	return result
+}
